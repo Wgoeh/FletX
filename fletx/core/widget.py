@@ -10,25 +10,12 @@ layout, and appearance customization.
 import flet as ft
 from abc import ABC, abstractmethod
 from typing import Union, List, Optional, Any, Dict
-from fletx.core.state import Reactive
+from fletx.core.state import (
+    Reactive, RxBool, RxInt, RxList, RxDict
+)
 from fletx.utils import get_logger
 from fletx.core.factory import FletXWidgetRegistry
 from fletx.utils.context import AppContext
-
-# from flet_core.control import Control as ft_Control 
-
-
-class FletXWidgetMeta(type(ft.Control)):
-    """Métaclasse pour l'enregistrement automatique"""
-    def __new__(cls, name, bases, dct):
-        # Crée la classe
-        new_class = super().__new__(cls, name, bases, dct)
-        
-        # Enregistre auprès de Flet si c'est un widget concret
-        if 'build' in dct and not getattr(new_class, '_abstract', False):
-            # ft.Control.(new_class)
-            pass
-        return new_class
 
 
 ####
@@ -50,8 +37,8 @@ class FletXWidget(ABC):
         # self.content = self.build()
         
         # Automatic registration for cleanup
-        # if AppContext.get_data("page"):
-        #     AppContext.get_data("page").add(self)
+        if AppContext.get_page():
+            self.page = AppContext.get_page()
 
     def __init_subclass__(cls, **kwargs):
         """Automatically register widget classes with FletXWidgetRegistry"""
@@ -87,13 +74,17 @@ class FletXWidget(ABC):
         self._dispose_reactives()
         self._is_mounted = False
     
-    def bind(self, prop_name: str, reactive_obj: Reactive):
+    def bind(
+        self, 
+        prop_name: str, 
+        reactive_obj: Union[Reactive, RxBool, RxInt, RxList, RxDict]
+    ):
         """
         Binds a widget property to a reactive object
         Usage: self.bind("text", rx_text)
         """
-        print(f"Binding {prop_name} to {reactive_obj}")
-        if not isinstance(reactive_obj, Reactive):
+
+        if not isinstance(reactive_obj, (Reactive, RxBool, RxInt, RxList, RxDict)):
             self.logger.error(
                 f"Attempted to bind {prop_name} to a non-reactive object: {reactive_obj}"
             )
@@ -105,6 +96,10 @@ class FletXWidget(ABC):
         reactive_obj.listen(self._create_update_callback(prop_name))
         self._reactives[prop_name] = reactive_obj
         setattr(self, prop_name, reactive_obj.value)
+
+        self.logger.debug(
+                f"bound {prop_name} to the reactive object: {reactive_obj}"
+            )
 
     def _create_update_callback(self, prop_name: str):
         """Generates a safe update callback"""
@@ -118,22 +113,38 @@ class FletXWidget(ABC):
                 # Optionally, you could raise an exception or log an error
                 # raise RuntimeError(f"{self.__class__.__name__} is not mounted")
                 # or return to prevent further processing
-                return
+                # return
                 
             new_value = self._reactives[prop_name].value
             setattr(self, prop_name, new_value)
             
             # Special handling for Control properties
             if hasattr(self, "content") and isinstance(self.content, ft.Control):
-                setattr(self.content, prop_name, new_value)
+                if hasattr(self.content, prop_name):
+                    # Update the property on the content control
+                    self.logger.debug(
+                        f"Updating {self.__class__.__name__}.content.{prop_name} to {new_value}"
+                    )
+                    setattr(self.content, prop_name, new_value)
+
+                if hasattr(self,'build'):
+                    # If the widget has a build method, call it to update the UI
+                    self.logger.debug(
+                        f"Rebuilding {self.__class__.__name__} after updating {prop_name}"
+                    )
+                    self.content = self.build()
+
+            # Special for handling for List[ft.Control] properties
+            elif hasattr(self, "controls") and isinstance(self.controls, list):
+                if hasattr(self, 'build'):
+                    # If the widget has a build method, call it to update the UI
+                    self.logger.debug(
+                        f"Rebuilding {self.__class__.__name__} after updating {prop_name}"
+                    )
+                    self.controls = self.build()
                 
             self.update()
         return callback
-
-    # def _build_add_commands(self, *args, **kwargs) -> None:
-    #     """Internal method to add commands to the widget."""
-        
-    #     return self.build()._build_add_commands(*args, **kwargs)
 
     def _dispose_reactives(self):
         """Cleanup all reactive bindings"""

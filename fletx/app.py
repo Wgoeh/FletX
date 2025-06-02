@@ -64,7 +64,6 @@ class FletXApp:
             # Configuration de la page
             page.theme_mode = self.theme_mode
             page.title = "FletX App"
-            # page.
 
             # Register all widgets
             # FletXWidgetRegistry.register_all(page)

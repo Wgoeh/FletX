@@ -6,20 +6,21 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name = 'FletX',
-    version = '1.0.0',
+    version = '0.1.0',
     packages = find_packages(),
     install_requires = [
         'httpx',
-        'simplejson',
         'colorlog',
-        'flet>=0.3.0',
+        'flet-core>=0.24.1',
+        'flet[all]>=0.28.3',
         'pydantic>=2.11.5',
+        'logging>=0.4.9.6',
         'typing-extensions',
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
     author = '#Einswilli',
     author_email = 'einswilligoeh@email.com',
-    description = 'SwitchPay Python SDK for AllDotPy internal use. ',
-    url = 'https://github.com/AllDotPy/iSwitch.git',
+    description = 'The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet',
+    url = 'https://github.com/AllDotPy/FletX.git',
 )
