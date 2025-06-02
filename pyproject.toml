@@ -1,8 +1,9 @@
 [project]
-name = "fletx"
+name = "FletX"
 version = "0.1.0"
-description = "Add your description here"
+description = "The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet"
 readme = "README.md"
+authors = [{ name = "#Einswilli", email = "einswilligoeh@email.com" }]
 requires-python = ">=3.12"
 dependencies = [
     "flet-core>=0.24.1",

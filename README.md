@@ -1,11 +1,7 @@
-Here's a comprehensive, well-structured, and engaging technical documentation for your GitHub README:
-
----
-
 # FletX 🚀  
 **The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
-[![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/fletx/)
+[![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/Flet-X/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/your-invite-code)](https://discord.gg/your-link)
 
@@ -177,10 +173,32 @@ FletXRouter.add_middleware(AnalyticsMiddleware())
 
 ## Roadmap 🗺️
 
-- [ ] FletX CLI tool
-- [ ] VS Code extension
+- [x] **Step 1** — **Fondation**
+    > ⚙️ **Goal** : build thechnical bases and essential abstractions. 
+- [x] **Step 2** — **State Management + DI**
+    > 🎯 **Goal** : Enable reactive state management.
+- [x] **Step 3** — **Advanced navigation**
+    > 🧭 **Goal** : Add support for modular and nested routing, middlewares and Guards.
+- [ ] **Step 4** — **Composants UI enrichis**
+    > 🧱 **Goal** : Add ready to use reactive UI components (enabling extensibility).
+- [ ] **Step 5** — **Utilities & CLI**
+    > 🛠️ **Goal** : Add tools to boost DX (developer experience).
+- [ ] **Step 6** — **Write Documentation**
+    > 📚 **Goal** : Write FletX's documentation.
+
+### Currently Working on
+
+- [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
+- [ ] Add Ready to use Reactive Widgets or components
+- [ ] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
+- [ ] Write Documentation
+
+### For the next version
+
+- [ ] Improve Actual routing system (enabling devs to create subrouters for modules)
+- [ ] Add Screen Management System for Page Widgets 
 - [ ] Enhanced dev tools
-- [ ] Plugin system
+- [ ] VS Code extension
 
 ---
 

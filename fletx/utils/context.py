@@ -40,7 +40,7 @@ class AppContext:
     @classmethod
     def get_page(cls) -> Optional[ft.Page]:
         """Retrieves the current Flet page"""
-        return cls._page.add
+        return cls._page
     
     @classmethod
     def set_data(cls, key: str, value: Any):
