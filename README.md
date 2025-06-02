@@ -179,7 +179,7 @@ FletXRouter.add_middleware(AnalyticsMiddleware())
     > 🎯 **Goal** : Enable reactive state management.
 - [x] **Step 3** — **Advanced navigation**
     > 🧭 **Goal** : Add support for modular and nested routing, middlewares and Guards.
-- [ ] **Step 4** — **Composants UI enrichis**
+- [ ] **Step 4** — **UI Components**
     > 🧱 **Goal** : Add ready to use reactive UI components (enabling extensibility).
 - [ ] **Step 5** — **Utilities & CLI**
     > 🛠️ **Goal** : Add tools to boost DX (developer experience).
@@ -202,6 +202,12 @@ FletXRouter.add_middleware(AnalyticsMiddleware())
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from the community! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) guide for more information.
+
+---
+
 ## License 📜
 
 MIT © 2023 AllDotPy
@@ -210,3 +216,9 @@ MIT © 2023 AllDotPy
 # Happy coding! 
 # Let's build amazing apps with Python 🐍
 ```
+
+<br>
+<p align = 'center'>
+    <img src='alldotpy.png?raw=true' height = '60'></img>
+</p>
+<p align = 'center'>Made with ❤️ By AllDotPy</p>
