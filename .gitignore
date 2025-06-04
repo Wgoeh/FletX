@@ -19,3 +19,4 @@
 *.DS_Store
 tree.txt
 uv.lock
+**/*_builder.py

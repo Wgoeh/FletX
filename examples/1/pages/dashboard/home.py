@@ -98,12 +98,12 @@ class DashboardHomePage(FletXPage):
                                         border = InputBorder.NONE,
                                         filled = True,
                                         # fill_color = Colors.GREY_900,
-                                        bgcolor = Colors.with_opacity(
+                                        fill_color = Colors.with_opacity(
                                             color = Colors.GREY_900,
                                             opacity = .5
                                         ),
                                         border_radius = BorderRadius(
-                                            top_left = 8, 
+                                            top_left = 30, 
                                             top_right = 8, 
                                             bottom_left = 8, 
                                             bottom_right = 8
