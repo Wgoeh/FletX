@@ -117,9 +117,20 @@ class FletXWidget(ABC):
                 
             new_value = self._reactives[prop_name].value
             setattr(self, prop_name, new_value)
+            self.logger.debug(
+                f"Updating {self.__class__.__name__}.{prop_name} to {new_value}"
+            )
+
+            # Special handling for Widget Builders
+            if hasattr(self, "_builder") and callable(self._builder):
+                # If the widget has a builder method, call it to update the UI
+                self.logger.debug(
+                    f"Rebuilding {self.__class__.__name__} after updating {prop_name}"
+                )
+                self.content = self._builder()
             
             # Special handling for Control properties
-            if hasattr(self, "content") and isinstance(self.content, ft.Control):
+            elif hasattr(self, "content") and isinstance(self.content, ft.Control):
                 if hasattr(self.content, prop_name):
                     # Update the property on the content control
                     self.logger.debug(
@@ -127,7 +138,14 @@ class FletXWidget(ABC):
                     )
                     setattr(self.content, prop_name, new_value)
 
-                if hasattr(self,'build'):
+                elif hasattr(self, prop_name):
+                    # If the widget has a property with the same name, update it
+                    self.logger.debug(
+                        f"Updating {self.__class__.__name__}.{prop_name} to {new_value}"
+                    )
+                    setattr(self, prop_name, new_value)
+
+                elif hasattr(self,'build'):
                     # If the widget has a build method, call it to update the UI
                     self.logger.debug(
                         f"Rebuilding {self.__class__.__name__} after updating {prop_name}"

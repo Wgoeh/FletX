@@ -242,6 +242,9 @@ class Computed(Reactive[T]):
         
         # Subscribing to dependencies
         for dep in self._dependencies:
+            self.logger.debug(
+                f"Subscribing to dependency: {dep.__class__.__name__}"
+            )
             dep.listen(self._update_value)
     
     def _update_value(self):
@@ -264,6 +267,9 @@ class Computed(Reactive[T]):
                 dep.listen(self._update_value)
         
         self.value = new_value
+        self.logger.debug(
+            f"Computed value updated: {self._value} from dependencies {self._dependencies}"
+        )
 
 
 ####

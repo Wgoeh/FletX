@@ -5,29 +5,6 @@ from dataclasses import dataclass, field
 from fletx.core.state import RxBool, RxStr
 from fletx.core.widget import FletXWidget
 from fletx.widgets import reactive_control
-
-# class AppHeader(FletXWidget):
-#     """En-tête réutilisable"""
-    
-#     def __init__(self, title: str):
-#         super().__init__(title=title)
-    
-#     def build(self) -> Control:
-#         return Row(
-#             controls=[
-#                 Text(self.get_prop('title'), size=20, weight="bold"),
-#                 IconButton(Icons.SETTINGS, on_click=lambda e: FletXRouter.to("/settings"))
-#             ],
-#             alignment="spaceBetween"
-#         )
-
-@dataclass
-class ReactiveTextFieldProps:
-    can_reveal_password: RxBool = field(default_factory=lambda: RxBool(False))
-    value: RxStr = field(default_factory=lambda: RxStr(""))
-    label: RxStr = field(default_factory=lambda: RxStr(""))
-    hint_text: RxStr = field(default_factory=lambda: RxStr(""))
-    password: RxBool = field(default_factory=lambda: RxBool())
     
 
 # Reactive Password Field
@@ -111,7 +88,7 @@ class TaskComponent(Container):
         )
     
     def _handle_click(self, e):
-        """Gère le clic pour basculer l'état de complétion"""
+        """Change the completion state of the task."""
         self.is_completed.toggle()
         # Update UI or perform other actions based on completion state
         print(f"Task {self._task_id} completed: {self._is_done}")

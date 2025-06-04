@@ -1,5 +1,5 @@
 from flet import *
-from ..shared.components import ReactivePasswordField, ReactiveTextFieldProps
+from ..shared.components import ReactivePasswordField
 from fletx import FletX
 from fletx.core.page import FletXPage
 from fletx.core.router import FletXRouter
@@ -22,7 +22,7 @@ class LoginPage(FletXPage):
         self.email_field = TextField(
             label = "email or phone number",
             height = 55,
-            fill_color = Colors.GREY_900,
+            # fill_color = Colors.GREY_900,
             bgcolor = Colors.with_opacity(
                 color = Colors.GREY_900,
                 opacity = .6
