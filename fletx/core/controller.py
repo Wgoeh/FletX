@@ -6,9 +6,8 @@ and to facilitate the creation of robust and maintainable applications.
 """
 
 from typing import List, Callable, Any
-from fletx.decorators.reactive import reactive_property, computed
 from fletx.core.effects import EffectManager
-from fletx import FletX
+from fletx.core.di import DI
 
 
 ####
@@ -29,7 +28,7 @@ class FletXController:
         self._disposed = False
         
         # Register effets Manager
-        FletX.put(self._effects, f"effects_{id(self)}")
+        DI.put(self._effects, f"effects_{id(self)}")
 
     @property
     def effects(self) -> EffectManager:
@@ -38,7 +37,7 @@ class FletXController:
         if self._disposed:
             raise RuntimeError("Controller is disposed")
             
-        return FletX.find(EffectManager, f"effects_{id(self)}")
+        return DI.find(EffectManager, f"effects_{id(self)}")
     
     def on_ready(self):
         """Lifecycle point when the controller is ready"""

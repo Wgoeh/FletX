@@ -1,7 +1,7 @@
-from fletx.core.controller import FletXController
-from fletx.core.state import RxStr, RxList
-from fletx.decorators.reactive import computed
-from fletx.core.effects import useEffect
+from fletx.core import (
+    FletXController,RxStr, RxList
+)
+from fletx.decorators import computed
 from models.user import User
 
 class DashboardController(FletXController):

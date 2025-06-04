@@ -11,8 +11,9 @@ from typing import (
 from abc import ABC, abstractmethod
 from fletx.core.controller import FletXController
 from fletx.core.types import RouteInfo
-from fletx import FletX
-from fletx.core.effects import EffectManager, useEffect
+from fletx.core.di import DI
+from fletx.core.effects import EffectManager
+# from fletx.decorators import use_effect as useEffect
 from fletx.utils import get_logger
 
 T = TypeVar('T', bound=FletXController)
@@ -37,7 +38,7 @@ class FletXPage(ABC):
         self._is_mounted = False
         
         # Register FletX Page instance Effect Manager
-        FletX.put(self._effects, f"page_effects_{id(self)}")
+        DI.put(self._effects, f"page_effects_{id(self)}")
 
     @classmethod
     @property
@@ -83,11 +84,11 @@ class FletXPage(ABC):
             return self._controllers[controller_key]
             
         # First Check for the controller in global DI
-        controller = FletX.find(controller_class, tag)
+        controller = DI.find(controller_class, tag)
         
         if not controller:
             controller = controller_class()
-            FletX.put(controller, tag)
+            DI.put(controller, tag)
         
         self._controllers[controller_key] = controller
         return controller
@@ -135,7 +136,7 @@ class FletXPage(ABC):
         """Cleans up all page resources"""
 
         self.will_unmount()
-        FletX.delete(EffectManager, f"page_effects_{id(self)}")
+        DI.delete(EffectManager, f"page_effects_{id(self)}")
 
     def on_resize(self, callback: Callable[[ft.ControlEvent], None]):
         """Listens to page size changes"""
@@ -164,7 +165,7 @@ class FletXPage(ABC):
     def _connect_event_handler(self, event_name: str, handler: Callable):
         """Attaches an event handler with automatic cleanup"""
         
-        page = FletX.find(ft.Page)
+        page = DI.find(ft.Page)
         if page:
             page.on_event(event_name, handler)
             return lambda: page.remove_event_handler(event_name, handler)

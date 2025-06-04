@@ -47,10 +47,10 @@ class CounterPage(FletXPage):
                 MyReactiveText(rx_text=self.ctrl.count, size=30, weight="bold"),
                 MyReactiveText(rx_text=self.ctrl.count, size=30, weight="bold"),
                 # self.my_counter_text(),  # Reactive text that updates automatically
-                ReactiveBuilder(
-                    builder=self.my_counter_text,
-                    dependencies=[self.ctrl.count]
-                ),
+                # ReactiveBuilder(
+                #     builder=self.my_counter_text,
+                #     dependencies=[self.ctrl.count]
+                # ),
                 MyReactiveText(rx_text=self.ctrl.count, size=30, weight="bold"),
                 ft.ElevatedButton(
                     "Increment",

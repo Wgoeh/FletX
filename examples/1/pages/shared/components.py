@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from fletx.core.state import RxBool, RxStr
 from fletx.core.widget import FletXWidget
-from fletx.widgets import reactive_control
+from fletx.decorators import reactive_control
     
 
 # Reactive Password Field

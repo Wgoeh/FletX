@@ -72,55 +72,13 @@ def watch(reactive_obj: Reactive):
                     f"Reactive object {reactive_obj} is not a valid reactive type."
                 )
 
-            # create a ref for the callback
-            ref = ft.Ref[ft.Control]()
-            result = func(self, *args, **kwargs)
-
-            # If the function returns a Control, set it to the content
-            if isinstance(result, ft.Control):
-                # result.ref = ref
-                ref.current = result
-
-                def update_callback(new_value):
-                    """Callback to update the control when reactive_obj changes"""
-                    if ref.current:
-                        # Update the control with the new value
-                        page = get_page()
-                        ref.current = new_value
-                        logger.debug(
-                            f"Updated {ref.current} due to changes in {reactive_obj}."
-                        )
-                    else:
-                        logger.warning(
-                            f"Ref {ref} is not set, cannot update control."
-                        )
-
-                # Register objserver
-                reactive_obj.listen(
-                    lambda: update_callback(
-                        func(self, *args, **kwargs)
-                    )
-                )
-                logger.warning(
-                    f"Linstening to {reactive_obj} changes with {func.__name__}."
-                )
-            else:
-                # If the result is not a Control, log a warning
-                # and return the result as is
-                logger.warning(
-                    f"Function {func.__name__} did not return a Control. "
-                    "Reactive updates will not be applied."
-                )
-                reactive_obj.listen(lambda: func(self, *args, **kwargs))
-                
-            
-            return result
-        # Set the name of the wrapper to match the original function
-        wrapper.__name__ = func.__name__
-        wrapper.__qualname__ = func.__qualname__
-        # Preserve the original function's docstring
-        wrapper.__doc__ = func.__doc__
-        # Return the wrapped function
-        wrapper.__wrapped__ = func
+            # Register objserver
+            reactive_obj.listen(
+                lambda: func(self, *args, **kwargs)
+            )
+            logger.warning(
+                f"Linstening to {reactive_obj} changes with {func.__name__}."
+            )
+            return func(self, *args, **kwargs)
         return wrapper
     return decorator
