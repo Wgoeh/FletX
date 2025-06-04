@@ -7,13 +7,10 @@ and share data between components in an efficient and reactive way.
 """
 
 import inspect
-from threading import Lock
-from functools import wraps
 from typing import Callable, List, Any, Optional, Dict
 
-from fletx import FletX
 from fletx.utils import get_logger
-from fletx.core.state import Reactive, ReactiveDependencyTracker
+# from fletx.core.state import Reactive, ReactiveDependencyTracker
 
 
 ####
@@ -146,17 +143,3 @@ class Effect:
             except Exception as e:
                 self.logger.error(f"Cleanup error on dispose: {e}", exc_info=True)
         self._cleanup_fn = None
-
-
-####    
-def useEffect(effect_fn: Callable, dependencies: List[Any] = None):
-    """Effect Decorator"""
-    # Gets the effect manager instance
-    # (to be integrated with FletX context)
-    manager = FletX.find(EffectManager)
-    
-    # Generates a unique key based on the call location
-    frame = inspect.currentframe().f_back
-    key = f"useEffect_{frame.f_lineno}"
-    
-    manager.useEffect(effect_fn, dependencies, key)

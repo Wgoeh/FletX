@@ -1,5 +1,5 @@
 """
-FletX - Mini framework inspiré de GetX pour Flet
+FletX - A lightweight dependency injection framework inspired by GetX for Flet applications.
 """
 
 from fletx.core.di import DI
@@ -7,28 +7,33 @@ from fletx.core.di import DI
 
 __version__ = "0.1.0"
 
-# Alias pour faciliter l'utilisation
+####
+##    FLETX - DEPENDENCY INJECTION INTERFACE
+####
 class FletX:
-    """Interface principale pour l'injection de dépendances"""
+    """FletX Dependency Injection Interface
+    This class provides a simple interface to interact with the Dependency Injection (DI) container.
+    It allows to register, find, delete, and reset instances in the DI container.
+    """
     
     @staticmethod
     def put(instance, tag=None):
-        """Enregistre une instance dans le DI container"""
+        """Register an instance in the DI container"""
         return DI.put(instance, tag)
     
     @staticmethod
     def find(cls, tag=None):
-        """Récupère une instance du DI container"""
+        """Retrieve an instance from the DI container"""
         return DI.find(cls, tag)
     
     @staticmethod
     def delete(cls, tag=None):
-        """Supprime une instance du DI container"""
+        """Delete an instance from the DI container"""
         return DI.delete(cls, tag)
     
     @staticmethod
     def reset():
-        """Remet à zéro le DI container"""
+        """Reset the DI container, clearing all registered instances."""
         return DI.reset()
 
 __all__ = [

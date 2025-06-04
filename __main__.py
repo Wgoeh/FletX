@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """ MAIN ENTRY POINT FOR FLETX CLI
-This module serves as the main entry point for the Breeze CLI. It handles command-line
+This module serves as the main entry point for the FletX CLI. It handles command-line
 arguments, initializes the command registry, and executes the specified command.
 """
 
