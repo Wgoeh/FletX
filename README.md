@@ -24,7 +24,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 <img src = "./screeshots/videos/counter.gif" width="300">
 
 ### Toto App
-<img src = "./screeshots/videos/todo.gif" height="400">
+<img src = "./screeshots/videos/todo.gif" width="400">
 
 ### Reactive Forms
 <img src = "./screeshots/videos/reactive_forms.gif" width="300">
