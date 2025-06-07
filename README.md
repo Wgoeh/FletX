@@ -27,7 +27,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
         <img src = "./screeshots/videos/counter.gif" width="400">
       </td>
       <td rowspan="2">
-        <img src = "./screeshots/videos/todo.gif" width="400">
+        <img src = "./screeshots/videos/todo.gif" width="300">
       </td>
     </tr>
     <tr >
