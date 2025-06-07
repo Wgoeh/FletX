@@ -1,7 +1,7 @@
 # FletX 🚀  
 **The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
-[![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/Flet-X/)
+<!-- [![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/Flet-X/) -->
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/your-invite-code)](https://discord.gg/your-link)
 
@@ -18,6 +18,18 @@ FletX brings Flutter's beloved **GetX** patterns to Python, combining Flet's UI 
 Perfect for building **desktop, web, and mobile apps** with Python at lightning speed.
 
 ---
+## Showcases
+
+### Counter App
+<img src = "./screeshots/videos/counter.gif">
+
+### Toto App
+<img src = "./screeshots/videos/todo.gif">
+
+### Reactive Forms
+<img src = "./screeshots/videos/reactive_forms.gif">
+
+---
 ## Architecture
 <img src = "architecture.svg">
 
@@ -31,28 +43,58 @@ pip install FletX
 ### Basic Usage (Counter App)
 ```python
 import flet as ft
-from fletx.app import FletXApp,
-from fletx.core import FletXPage, FletXController, RxInt
+
+from fletx.app import FletXApp
+from fletx.core import (
+    FletXPage, FletXController, RxInt, RxStr
+)
+from fletx.decorators import (
+simple_reactive,
+)
 
 
 class CounterController(FletXController):
     count = RxInt(0)  # Reactive state
 
+
+@simple_reactive(
+    bindings={
+        'value': 'text'
+    }
+)
+class MyReactiveText(ft.Text):
+
+    def __init__(self, rx_text: RxStr, **kwargs):
+        self.text: RxStr = rx_text
+        super().__init__(**kwargs)
+
 class CounterPage(FletXPage):
+    ctrl = CounterController()
+    
     def build(self):
-        ctrl = CounterController()
         return ft.Column(
-            controls=[
-                ft.Text(f"Count: {ctrl.count.value}"),
+            controls = [
+                MyReactiveText(rx_text=self.ctrl.count, size=200, weight="bold"),
                 ft.ElevatedButton(
                     "Increment",
-                    on_click=lambda e: ctrl.count.value += 1  # Auto UI update
+                    on_click=lambda e: self.ctrl.count.increment()  # Auto UI update
                 )
             ]
         )
 
-app = FletXApp(routes={"/": CounterPage})
-app.run()
+
+def main(page: ft.Page):
+    page.title = "Counter Example"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.add(CounterPage().build())    # Add the CounterPage to the FletX page
+    app = FletXApp(
+        routes = {"/": CounterPage}
+    )
+    app._main(page)                    # Initialize the FletX application with the page
+
+if __name__ == "__main__":
+    ft.app(target=main)
+
 ```
 
 ---
@@ -62,7 +104,7 @@ app.run()
 ### 1. Reactive State Management
 ```python
 from fletx.core import RxStr, RxList 
-from fletx.decorators.reactive import computed
+from fletx.decorators import computed
 
 class UserController(FletXController):
     name = RxStr("")

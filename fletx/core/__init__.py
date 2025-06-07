@@ -7,7 +7,10 @@ from fletx.core.state import (
     ReactiveDependencyTracker, Observer,
     Reactive, Computed, RxBool, RxDict, RxInt, RxList, RxStr
 )
-from fletx.core.types import RouteInfo
+from fletx.core.types import (
+    RouteInfo, BindingConfig, BindingType,
+    ComputedBindingConfig, FormFieldValidationRule
+)
 from fletx.core.widget import FletXWidget
 
 __all__ = [
@@ -27,5 +30,9 @@ __all__ = [
     'RxList',
     'RxStr',
     'RouteInfo',
+    'BindingConfig',
+    'BindingType',
+    'ComputedBindingConfig',
+    'FormFieldValidationRule',
     'FletXWidget'
 ]
