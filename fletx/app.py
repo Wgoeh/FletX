@@ -63,7 +63,6 @@ class FletXApp:
         try:
             # Configuration de la page
             page.theme_mode = self.theme_mode
-            page.title = "FletX App"
 
             # Register all widgets
             # FletXWidgetRegistry.register_all(page)
@@ -76,7 +75,7 @@ class FletXApp:
             # Initialisation du router
             FletXRouter.initialize(page, self.initial_route)
             
-            self.logger.info("FletX Application initialized wity success")
+            self.logger.info("FletX Application initialized with success")
             
         except Exception as e:
             self.logger.error(f"Error when initializing FletX App: {e}")

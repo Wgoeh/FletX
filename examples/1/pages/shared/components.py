@@ -2,32 +2,36 @@ from typing import Optional, List
 from flet import *
 from dataclasses import dataclass, field
 
-from fletx.core.state import RxBool, RxStr
-from fletx.core.widget import FletXWidget
-from fletx.decorators import reactive_control
+from fletx.core import (
+    RxBool, RxStr, FletXWidget,
+    BindingConfig, BindingType
+)
+from fletx.decorators import reactive_control, simple_reactive
     
 
 # Reactive Password Field
-class ReactivePasswordField(TextField, FletXWidget):
+@simple_reactive(
+    {'password': 'is_password'}
+)
+class ReactivePasswordField(TextField):
     def __init__(
         self, 
         is_password: RxBool = RxBool(), 
         **kwargs
     ):
+        self.is_password = is_password
+
         super().__init__(**kwargs)
         FletXWidget.__init__(self, **kwargs)
-
-        self.is_password = is_password
-        # print("ReactivePasswordField initialized with reactives:", type(reactives.password))
-        self.bind('password', self.is_password)
-        # self.bind('label', reactives.label)
-        # self.bind('hint_text', reactives.hint_text)
-        # self.bind('can_reveal_password', reactives.can_reveal_password)
 
         
 @reactive_control(
     bindings = {
-        '_is_done':'is_completed'
+        '_is_done': BindingConfig(
+            reactive_attr = 'is_completed',
+            binding_type = BindingType.ONE_WAY,
+            # on_change = 
+        )
     }
 )
 class TaskComponent(Container):
@@ -35,14 +39,14 @@ class TaskComponent(Container):
     Reactive CheckBox widget that integrates with FletX's reactivity system.
     """
 
-    is_completed: RxBool
+    # is_completed: RxBool
 
     def __init__(self, index: int, task_id: str, task_name: str, **kwargs):
-        super().__init__(**kwargs)
         self._task_name: str = task_name
         self._task_id: str = task_id
         self.index: int = index
 
+        super().__init__(**kwargs)
         # Reactive state for task completion
         self.is_completed: RxBool = RxBool(False)
         self._is_done = False
@@ -87,8 +91,13 @@ class TaskComponent(Container):
             ]
         )
     
+    def before_update(self):
+        self.content = self.build()
+        return super().before_update()
+    
     def _handle_click(self, e):
         """Change the completion state of the task."""
+        
         self.is_completed.toggle()
         # Update UI or perform other actions based on completion state
         print(f"Task {self._task_id} completed: {self._is_done}")

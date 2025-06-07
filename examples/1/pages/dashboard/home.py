@@ -1,14 +1,11 @@
 from flet import * 
 from fletx import FletX
-from fletx.core.page import FletXPage
-from fletx.core.router import FletXRouter
-from fletx.decorators.controllers import page_controller
+from fletx.core import FletXPage, FletXRouter
 from .controller import DashboardController
 from ..shared.components import (
     TaskComponent
 )
 
-# @page_controller  # Injection automatique du contrôleur
 class DashboardHomePage(FletXPage):
     def __init__(self):
         super().__init__()
@@ -246,7 +243,8 @@ class DashboardHomePage(FletXPage):
                                                 ),
                                                 task_name = task.get(
                                                     'task_name', f"Task {idx + 1}"
-                                                )                                            )
+                                                )                                            
+                                            )
                                             for idx, task in enumerate(self.controller.todos)
                                         ]
                                     )

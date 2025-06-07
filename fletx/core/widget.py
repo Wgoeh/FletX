@@ -8,14 +8,15 @@ layout, and appearance customization.
 """
 
 import flet as ft
+import warnings
 from abc import ABC, abstractmethod
 from typing import Union, List, Optional, Any, Dict
 from fletx.core.state import (
     Reactive, RxBool, RxInt, RxList, RxDict
 )
-from fletx.utils import get_logger
+from fletx.utils import get_logger, get_page
 from fletx.core.factory import FletXWidgetRegistry
-from fletx.utils.context import AppContext
+# from fletx.utils.context import AppContext
 
 
 ####
@@ -30,22 +31,25 @@ class FletXWidget(ABC):
     _logger = get_logger('FletX.Widget')
 
     def __init__(self, **kwargs):
-        super().__init__()
-        self._reactives: Dict[str, Reactive] = {}  # Tracks reactive bindings
-        self._props = kwargs                      # Original properties system
+        self._reactives: Dict[str, Reactive] = {}   # Deprecated
+        self._props = kwargs                        # Deprecated
         self._is_mounted = False        
         # self.content = self.build()
+        super().__init__()
         
-        # Automatic registration for cleanup
-        if AppContext.get_page():
-            self.page = AppContext.get_page()
+        
 
     def __init_subclass__(cls, **kwargs):
         """Automatically register widget classes with FletXWidgetRegistry"""
+
+        # Automatic registration for cleanup
+        cls.page = get_page()
+        cls.page.controls.append(cls)
         
         super().__init_subclass__(**kwargs)
         # Register the widget class
         FletXWidgetRegistry.register(cls)
+        cls.page.update()
         
 
     @classmethod
@@ -84,6 +88,8 @@ class FletXWidget(ABC):
         Usage: self.bind("text", rx_text)
         """
 
+        warnings.warn('FletXWidget.bind is deprecated and will be removed soon.')
+
         if not isinstance(reactive_obj, (Reactive, RxBool, RxInt, RxList, RxDict)):
             self.logger.error(
                 f"Attempted to bind {prop_name} to a non-reactive object: {reactive_obj}"
@@ -104,6 +110,10 @@ class FletXWidget(ABC):
     def _create_update_callback(self, prop_name: str):
         """Generates a safe update callback"""
 
+        warnings.warn(
+            'FletXWidget._create_update_callback is '
+            'deprecated and will be removed soon.'
+        )
         def callback():
             if not self._is_mounted:
                 self.logger.warning(
@@ -120,14 +130,6 @@ class FletXWidget(ABC):
             self.logger.debug(
                 f"Updating {self.__class__.__name__}.{prop_name} to {new_value}"
             )
-
-            # Special handling for Widget Builders
-            # if hasattr(self, "_builder") and callable(self._builder):
-            #     # If the widget has a builder method, call it to update the UI
-            #     self.logger.debug(
-            #         f"Rebuilding {self.__class__.__name__} after updating {prop_name}"
-            #     )
-            #     self.content = self._builder()
             
             # Special handling for Control properties
             if hasattr(self, "content") and isinstance(self.content, ft.Control):

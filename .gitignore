@@ -20,3 +20,4 @@
 tree.txt
 uv.lock
 **/*_builder.py
+**/*nfc.py
