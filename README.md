@@ -21,13 +21,13 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 ## Showcases
 
 ### Counter App
-<img src = "./screeshots/videos/counter.gif">
+<img src = "./screeshots/videos/counter.gif" width="300">
 
 ### Toto App
-<img src = "./screeshots/videos/todo.gif">
+<img src = "./screeshots/videos/todo.gif" height="400">
 
 ### Reactive Forms
-<img src = "./screeshots/videos/reactive_forms.gif">
+<img src = "./screeshots/videos/reactive_forms.gif" width="300">
 
 ---
 ## Architecture
