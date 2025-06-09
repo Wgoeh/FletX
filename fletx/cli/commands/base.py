@@ -1,5 +1,3 @@
-# breeze/commands/base.py
-
 from argparse import (
     Namespace, ArgumentParser
 )
@@ -139,13 +137,13 @@ class BaseCommand(ABC):
 
     command_name: str = ""
 
-    def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls)
+    def __init_subclass__(cls, *args, **kwargs):
 
         # Automatically register the command class in the registry
         if cls.command_name:
             CommandRegistry.register(cls.command_name, cls)
-        return instance
+        
+        super().__init_subclass__(**kwargs)
 
     def run_from_argv(self, argv: List[str]) -> None:
         """ 

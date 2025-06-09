@@ -13,7 +13,7 @@ from fletx.utils.context import AppContext
 from fletx.utils.exceptions import FletXError
 
 class FletXApp:
-    """"""
+    """Main application class"""
     
     def __init__(
         self, 
@@ -61,18 +61,18 @@ class FletXApp:
         """Main entry point for Flet"""
 
         try:
-            # Configuration de la page
+            # Configure page
             page.theme_mode = self.theme_mode
 
             # Register all widgets
             # FletXWidgetRegistry.register_all(page)
             
-            # Initialisation du contexte global
+            # FletX App Context Initialization
             AppContext.initialize(page, self.debug)
 
             AppContext.set_data("logger", self.logger)
             
-            # Initialisation du router
+            # FletX Router Initialization
             FletXRouter.initialize(page, self.initial_route)
             
             self.logger.info("FletX Application initialized with success")

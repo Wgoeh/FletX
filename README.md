@@ -1,9 +1,9 @@
 # FletX 🚀  
-**The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
+**The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
 <!-- [![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/Flet-X/) -->
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Discord](https://img.shields.io/discord/your-invite-code)](https://discord.gg/your-link)
+[![Discord](https://img.shields.io/discord/v6trjD8m)](https://discord.gg/v6trjD8m)
 
 ## Why FletX? ✨
 
@@ -24,14 +24,17 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
   <table>
     <tr>
       <td>
+        Counter App
         <img src = "./screeshots/videos/counter.gif" width="400">
       </td>
       <td rowspan="2">
+        Todo App
         <img src = "./screeshots/videos/todo.gif" width="300">
       </td>
     </tr>
     <tr >
       <td>
+        Reactive Forms
         <img src = "./screeshots/videos/reactive_forms.gif" width="400">
       </td>
     </tr>
@@ -58,6 +61,33 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 ```bash
 pip install FletX
 ```
+
+### Creat project
+```sh
+fletx new my_project --no-install
+```
+
+### Created project structure 🏗️
+
+```sh
+my_project/
+├── app/
+│   ├── controllers/     # Business logic controllers
+│   ├── services/       # Business services and API calls
+│   ├── models/         # Data models
+│   ├── components/     # Reusable widgets
+│   ├── pages/          # Application pages
+│   └── routes.py       # App routing modules
+├── assets/             # Static assets (images, fonts, etc.)
+├── tests/              # Test files
+├── .python-version     # Python dependencies
+├── pyproject.toml      # Python dependencies
+├── README.md           # Quick start README
+└── main.py            # Application entry point
+```
+
+---
+
 
 ### Basic Usage (Counter App)
 ```python
@@ -122,16 +152,42 @@ if __name__ == "__main__":
 
 ### 1. Reactive State Management
 ```python
-from fletx.core import RxStr, RxList 
-from fletx.decorators import computed
-
-class UserController(FletXController):
-    name = RxStr("")
-    todos = RxList([])
+class SearchController:
+    """Search controller"""
     
-    @computed
-    def todo_count(self) -> int:
-        return len(self.todos)  # Auto-updates when todos change
+    def __init__(self):
+        self.query = RxStr("")
+        self.results = RxList([])
+        self.is_loading = RxBool(False)
+        self.is_enabled = RxBool(True)
+        
+        # Configure reactives effects
+        self._setup_reactive_effects()
+    
+    def _setup_reactive_effects(self):
+        """Configure reactive effects"""
+        
+        # Search with debounce
+        @reactive_debounce(0.5)
+        @reactive_when(self.is_enabled)
+        def search_handler():
+            if self.query.value.strip():
+                self.perform_search(self.query.value)
+        
+        # Listen query changes
+        self.query.listen(search_handler)
+        
+        # Cache expensive search results
+        @reactive_memo(maxsize=50)
+        def expensive_search(query: str):
+            # Expensive search simulation
+            import time
+            time.sleep(0.1)  # Simulate 
+            return [f"Result {i} for '{query}'" for i in range(5)]
+        
+        self.expensive_search = expensive_search
+
+        # Other actions here...
 ```
 
 ### 2. Smart Routing
@@ -159,34 +215,20 @@ FletX.put(AuthService(), tag="auth")
 auth_service = FletX.find(AuthService, tag="auth")
 ```
 
-### 4. Ready-to-Use Widgets
+### 4. Reactive Widgets
+FletX allows you to quickly create reactive widgets from flet Controls by using
+reactive widget decorators.
 ```python
-from fletx.widgets import (
-    FletXCard,
-    FletXResponsiveRow,
-    FletXProgressRing
+from fletx.decorators import (
+    reactive_control, simple_reactive,
+    reactive_state_machine, reactive_form,
+    two_way_reactive, reactive_list,
+    ...
 )
 ```
 
 ---
 
-## Architecture Overview 🏗️
-
-```
-my_app/
-├── main.py          # App entry point
-├── routes.py        # Route definitions
-├── controllers/     # Business logic
-│   ├── auth.py
-│   └── user.py
-├── pages/           # UI components
-│   ├── home.py
-│   └── profile.py
-└── models/          # Data models
-    └── user.py
-```
-
----
 
 ## Advanced Usage 🛠️
 
@@ -226,8 +268,8 @@ FletXRouter.add_middleware(AnalyticsMiddleware())
 
 ## Community & Support 💬
 
-- [Documentation](https://fletx.dev/docs) 📚
-- [Discord Community](https://discord.gg/your-link) 💬
+- [Documentation](https://fletx.dev/docs) 📚 (not available for now.)
+- [Discord Community](https://discord.gg/v6trjD8m) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
 
 ---

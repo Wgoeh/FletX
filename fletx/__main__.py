@@ -6,7 +6,9 @@ arguments, initializes the command registry, and executes the specified command.
 """
 
 import sys
-from fletx.cli.commands.base import CommandRegistry
+from fletx.cli import (
+    FletXCLI
+)
 
 def main():
     """ 
@@ -15,23 +17,9 @@ def main():
     from the command registry, and executes the command with the provided arguments.
     If no command is provided, it lists all available commands.
     """
-    
-    argv = sys.argv[1:]
-    if not argv:
-        print("No command provided.")
-        print("Available commands:")
-        for command_cls in CommandRegistry.all():
-            print(f"  {command_cls.command_name} - {command_cls().get_description()}")
-        return
 
-    command_name, *command_args = argv
-
-    try:
-        command_cls = CommandRegistry.get(command_name)
-        command_instance = command_cls()
-        command_instance.run_from_argv(command_args)
-    except ValueError as e:
-        print(str(e))
+    cli = FletXCLI()
+    cli.execute_from_command_line()
 
 if __name__ == "__main__":
     main()

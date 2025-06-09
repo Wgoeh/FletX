@@ -434,69 +434,29 @@ def reactive_effect(
     
     return decorator
 
-####    COMPUTED PROPERTIES DECORATOR
-def computed(func: Callable) -> property:
-    """Decorator for computed properties"""
+####
+##      REACTIVE COMPUTED DECORATOR
+#####
+def reactive_computed(dependencies: Optional[List[Reactive]] = None):
+    """
+    Creates a computed reactive value from a function.
     
-    @property
-    @wraps(func)
-    def wrapper(self):
-        # Create a Computed if not exists
-        if not hasattr(self, f"__computed_{func.__name__}"):
-            # Deps detection
-            def getter():
-                return func(self)
-                
-            _, deps = ReactiveDependencyTracker.track(getter)
-            
-            # Now Create the computed property
-            computed_obj = Computed(getter, list(deps))
-            setattr(self, f"__computed_{func.__name__}", computed_obj)
-        
-        return getattr(self, f"__computed_{func.__name__}").value
+    Args:
+        dependencies: List of reactive dependencies (auto-detected if None)
     
-    return wrapper
-
-
-###     REACTIVE PROPERTIES DECORATOR
-def reactive_property(func: Callable) -> property:
-    """Decorator for reactive properties"""
+    Usage:
+    ```python
+    first_name = RxStr("John")
+    last_name = RxStr("Doe")
     
-    @property
-    @wraps(func)
-    def wrapper(self):
-        return func(self)
+    @reactive_computed([first_name, last_name])
+    def full_name():
+        return f"{first_name.value} {last_name.value}"
     
-    @wrapper.setter
-    def wrapper(self, value):
-        # Simplified Implementation
-        setattr(self, f"_{func.__name__}", value)
-        if hasattr(self, "update"):
-            self.update()
+    # full_name is now a Reactive[str] that updates automatically
+    """
+    def decorator(func: F) -> Reactive:
+        from fletx.core.state import Computed
+        return Computed(func, dependencies)
     
-    return wrapper
-
-####    WATCH REACTIVE OBJETCS
-def watch(reactive_obj: Reactive):
-    """Decorator for watching reactive objetcs"""
-
-    def decorator(func: Callable[[],ft.Control]) -> Callable:
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-
-            # Check if the reactive_obj is a valid reactive type
-            if not hasattr(reactive_obj, 'listen'):
-                raise TypeError(
-                    f"Reactive object {reactive_obj} is not a valid reactive type."
-                )
-
-            # Register objserver
-            reactive_obj.listen(
-                lambda: func(self, *args, **kwargs)
-            )
-            logger.warning(
-                f"Linstening to {reactive_obj} changes with {func.__name__}."
-            )
-            return func(self, *args, **kwargs)
-        return wrapper
     return decorator

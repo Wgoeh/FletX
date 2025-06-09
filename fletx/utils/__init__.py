@@ -1,6 +1,9 @@
 import logging
+from pathlib import Path
+from types import ModuleType
 import flet
-from typing import Optional
+from typing import Optional, Union
+from importlib import import_module
 
 from fletx.utils.context import AppContext
 
@@ -29,3 +32,9 @@ def get_page() -> flet.Page:
             " Ensure AppContext.initialize() is called before accessing the page."
         )
     return page
+
+# IMPORT MODULE
+def import_module_from(path: Union[str,Path]) ->'ModuleType':
+    """Import module using importlib"""
+    
+    return import_module(path)
