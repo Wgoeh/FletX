@@ -38,4 +38,5 @@ class FletX:
 
 __all__ = [
     'FletX',
+    '__version__'
 ]

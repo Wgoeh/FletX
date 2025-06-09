@@ -1,5 +1,6 @@
 """
 FletX Exceptions 
+These exceptions provide better error handling and user feedback.
 """
 
 ####
@@ -66,6 +67,29 @@ class StateError(FletXError):
 
 
 ####
+##      VALIDATION EXCEPTION CLASS
+#####
+class ValidationError(FletXError):
+    """
+    Exception raised when validation fails.
+    This is used for input validation errors.
+    """
+    pass
+
+
+####
+##      CONFIGURATION EXCEPTION CLASS
+#####
+class ConfigurationError(FletXError):
+    """
+    Exception raised when there's an error with configuration.
+    This includes missing config files, invalid config format, etc.
+    """
+    pass
+
+
+
+####
 ##      BASE CLI EXCEPTION CLASS
 #####
 class FletXCLIError(FletXError):
@@ -77,9 +101,10 @@ class FletXCLIError(FletXError):
 ####
 ##      COMMAND EXCEPTION CLASS
 #####
-class CommandError(FletXError):
+class CommandError(FletXCLIError):
     """
-    Exception class indicating a problem while executing a command.
+    Exception raised when there's an error with command arguments or setup.
+    This is typically used for user input errors or configuration issues.
     """
 
     def __init__(self, *args, returncode=1, **kwargs):
@@ -91,7 +116,9 @@ class CommandError(FletXError):
 ##      COMMAND NOT FOUND EXCEPTION CLASS
 #####
 class CommandNotFoundError(CommandError):
-    """Exception levée quand une commande n'est pas trouvée."""
+    """
+    Exception raised when a requested command is not found in the registry.
+    """
 
     pass
         
@@ -100,6 +127,31 @@ class CommandNotFoundError(CommandError):
 ##      COMMAND EXECUTION ERROR CLASS
 #####
 class CommandExecutionError(CommandError):
-    """Exception levée lors d'une erreur d'exécution de commande."""
+    """
+    Exception raised when a command fails during execution.
+    This is used for runtime errors that occur while the command is running.
+    """
     
+    pass
+
+
+####
+##      TEMPLATE ERROR CLASS
+#####
+class TemplateError(FletXCLIError):
+    """
+    Exception raised when there's an error with template processing.
+    This includes template not found, invalid template format, etc.
+    """
+    pass
+
+
+####
+##      PROJECT ERROR CLASS
+#####
+class ProjectError(FletXCLIError):
+    """
+    Exception raised when there's an error with project operations.
+    This includes project not found, invalid project structure, etc.
+    """
     pass

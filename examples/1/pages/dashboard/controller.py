@@ -1,7 +1,6 @@
 from fletx.core import (
     FletXController,RxStr, RxList
 )
-from fletx.decorators import computed
 from models.user import User
 
 class DashboardController(FletXController):
@@ -17,13 +16,7 @@ class DashboardController(FletXController):
             []
         )
     
-    # @property
-    @computed
-    def todo_count(self) -> int:
-        return len(self.todos.value)
-    
-    # @property
-    @computed
+
     def welcome_message(self) -> str:
         return f"Bienvenue, {self.username.value}"
     

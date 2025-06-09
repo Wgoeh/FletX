@@ -1,10 +1,20 @@
-from fletx.app import FletXApp
+"""
+{{ description }}
+
+A FletX application.
+Author: {{ author }}
+Version: {{ version }}
+"""
+
 import flet as ft
-from routes import routes
+from fletx.app import FletXApp
+from app.routes import routes
 
 def main(page: ft.Page):
-    # Configuration de la page
-    page.title = "Mon App FletX"
+    """Main entry point for the Flet application."""
+
+    # Configure Page
+    page.title = "{{ project_name }}"
 
     # Setting up theme
     page.theme = ft.Theme(
@@ -13,7 +23,6 @@ def main(page: ft.Page):
     page.dark_theme = ft.Theme(
         color_scheme_seed = ft.Colors.BLUE_800,
         scaffold_bgcolor = ft.Colors.BLACK,
-        font_family = 'Bebas Neue, sans-serif',
     )
     page.theme_mode = ft.ThemeMode.DARK
 
@@ -21,14 +30,14 @@ def main(page: ft.Page):
     page.window.height = 810
     page.window.width = 400
     
-    # Initialisation de l'application FletX
+    # FletX Application Initialization
     app = FletXApp(
         routes = routes,
-        initial_route = "/login",
+        initial_route = "/",
         debug = True
     )
     
-    # Cette méthode initialise le router avec la page Flet
+    # 
     app._main(page) 
 
 if __name__ == "__main__":

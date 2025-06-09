@@ -4,7 +4,6 @@ from fletx import FletX
 from fletx.core.page import FletXPage
 from fletx.core.router import FletXRouter
 from fletx.core.state import RxBool
-from fletx.decorators.reactive import computed
 from .controller import AuthController
 from .guards import AuthGuard
 
