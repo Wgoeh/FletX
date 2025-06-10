@@ -1,5 +1,5 @@
 [project]
-name = "FletX"
+name = "FletXr"
 version = "0.1.0"
 description = "The GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet"
 readme = "README.md"
@@ -13,8 +13,11 @@ dependencies = [
     "setuptools>=80.8.0",
 ]
 
+[project.urls]
+"Homepage" = "https://github.com/AllDotPy/FletX"
+
 [project.optional-dependencies]
-dev = ["pytest", "black", "mypy","twine","uv"]
+dev = ["pytest", "black", "mypy","twine","uv","buil"]
 
 [tool.setuptools]
 packages = ["fletx"]
