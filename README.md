@@ -1,7 +1,7 @@
 # FletX 🚀  
 **The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
-<!-- [![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/Flet-X/) -->
+[![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/FletXr/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/v6trjD8m)](https://discord.gg/v6trjD8m)
 
@@ -59,7 +59,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletX
+pip install FletXr
 ```
 
 ### Creat project
