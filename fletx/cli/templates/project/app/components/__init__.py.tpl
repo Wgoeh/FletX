@@ -6,7 +6,7 @@ Version: {{ version }}
 """
 
 # Import your widgets here...
-from reactive_text import MyReactiveText
+from .reactive_text import MyReactiveText
 
 __all__ = [
     'MyReactiveText'

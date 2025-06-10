@@ -47,7 +47,6 @@ class FletXCLI:
         """Discover and import all command modules."""
 
         commands_dir = Path(__file__).parent / "commands"
-        print(commands_dir)
         
         for file_path in commands_dir.glob("*.py"):
             if file_path.name != "__init__.py" and file_path.name != "base.py":

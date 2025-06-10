@@ -5,7 +5,6 @@ This module serves as the main entry point for the FletX CLI. It handles command
 arguments, initializes the command registry, and executes the specified command.
 """
 
-import sys
 from fletx.cli import (
     FletXCLI
 )

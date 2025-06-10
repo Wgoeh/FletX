@@ -12,16 +12,18 @@ class CounterPage(FletXPage):
     
     def build(self):
         return ft.Column(
+            spacing = 20,
+            expand = True,
             alignment = ft.MainAxisAlignment.CENTER,
             horizontal_alignment = ft.CrossAxisAlignment.CENTER,
-            spacing = 20,
             controls = [
                 ft.Text(
                     "{{ project_name }} Counter",
-                    size = 40,
+                    size = 20,
                     weight = ft.FontWeight.BOLD
                 ),
                 MyReactiveText(
+                    value = '0',
                     rx_text = self.ctrl.count, # Auto update when count changes
                     size = 100, 
                     weight = ft.FontWeight.BOLD
