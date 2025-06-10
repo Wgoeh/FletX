@@ -97,7 +97,9 @@ class ComponentCommand(TemplateCommand):
             # Generate component from template
             print(f"Generating {component_type} '{name}'...")
             template_manager.generate_from_template(
-                template, target_dir, context, overwrite
+                template, target_dir, context, 
+                overwrite = overwrite,
+                target_filename = f'{name}_{component_type}.py'.lower()
             )
             
             # Generate test file if requested
@@ -173,7 +175,10 @@ class ComponentCommand(TemplateCommand):
         
         # Check if test template exists
         if not template_manager.template_exists(test_template):
-            print(f"Warning: Test template '{test_template}' not found, skipping test generation.")
+            print(
+                f"Warning: Test template '{test_template}' "
+                "not found, skipping test generation."
+            )
             return
         
         print(f"Generating test file for {component_type} '{name}'...")

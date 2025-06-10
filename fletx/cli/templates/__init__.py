@@ -76,6 +76,7 @@ class TemplateManager:
         template_name: str, 
         target_path: Path, 
         context: Dict[str, Any],
+        target_filename: Optional[str] = None,
         overwrite: bool = False
     ) -> None:
         """
@@ -100,7 +101,11 @@ class TemplateManager:
         context = self._enhance_context(context)
         
         # Process template directory
-        self._process_template_directory(template_path, target_path, context, overwrite)
+        self._process_template_directory(
+            template_path, target_path, context, 
+            overwrite = overwrite,
+            target_filename = target_filename
+        )
     
     def _enhance_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """Add common context variables."""
@@ -133,21 +138,30 @@ class TemplateManager:
         template_path: Path, 
         target_path: Path, 
         context: Dict[str, Any],
-        overwrite: bool
+        overwrite: bool,
+        target_filename: Optional[str] = None
     ) -> None:
         """Recursively process a template directory."""
+
         for item in template_path.iterdir():
             if item.name.startswith('.'):
                 continue
             
             # Process the item name through template engine
-            item_name = self._render_string(item.name, context)
-            target_item = target_path / item_name
+            item_name = (
+                self._render_string(item.name, context) 
+                if not target_filename 
+                else target_filename
+            )
+            target_item = target_path / item_name 
             
             if item.is_dir():
                 # Recursively process subdirectory
                 target_item.mkdir(exist_ok=True)
-                self._process_template_directory(item, target_item, context, overwrite)
+                self._process_template_directory(
+                    item, target_item, context, overwrite,
+                    target_filename = target_filename
+                )
             else:
                 # Process file
                 self._process_template_file(item, target_item, context, overwrite)
@@ -157,7 +171,7 @@ class TemplateManager:
         template_file: Path, 
         target_file: Path, 
         context: Dict[str, Any],
-        overwrite: bool
+        overwrite: bool,
     ) -> None:
         """Process a single template file."""
 
@@ -169,7 +183,9 @@ class TemplateManager:
         # Handle different file types
         if template_file.suffix == '.tpl':
             # Template file - render and remove .tpl extension
-            target_file = target_file.with_suffix('')
+            if target_file.stem == template_file.stem:
+                target_file = target_file.with_suffix('') #_name(target_file.stem)
+            
             content = self._render_template_file(template_file, context)
             target_file.write_text(content, encoding='utf-8')
             print(f"Generated: {target_file}")
