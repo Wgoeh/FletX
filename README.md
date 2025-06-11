@@ -62,7 +62,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 pip install FletXr
 ```
 
-### Creat project
+### Create project
 ```sh
 fletx new my_project --no-install
 ```
