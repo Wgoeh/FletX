@@ -13,11 +13,14 @@ dependencies = [
     "setuptools>=80.8.0",
 ]
 
+[project.scripts]
+fletx = "fletx.__main__:main"
+
 [project.urls]
 "Homepage" = "https://github.com/AllDotPy/FletX"
 
 [project.optional-dependencies]
-dev = ["pytest", "black", "mypy","twine","uv","buil"]
+dev = ["pytest", "black", "mypy","twine","uv","build"]
 
 [tool.setuptools]
 packages = ["fletx"]
