@@ -1,7 +1,8 @@
 # FletX 🚀  
 **The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
-[![PyPI Version](https://img.shields.io/pypi/v/fletx)](https://pypi.org/project/FletXr/)
+[![PyPI Version](https://img.shields.io/pypi/v/FletXr)](https://pypi.org/project/FletXr/)
+[![Downloads](https://static.pepy.tech/badge/FletXr)](https://pepy.tech/project/FletXr)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/v6trjD8m)](https://discord.gg/v6trjD8m)
 
@@ -313,7 +314,7 @@ We welcome contributions from the community! Please see the [CONTRIBUTING.md](CO
 
 ## License 📜
 
-MIT © 2023 AllDotPy
+MIT © 2025 AllDotPy
 
 ```bash
 # Happy coding! 

@@ -1,7 +1,7 @@
 import flet as ft
 from fletx.core.page import FletXPage
 from fletx.decorators.controllers import page_controller
-from fletx.core.router import FletXRouter
+from fletx.core.routing.router import FletXRouter
 from .controller import DashboardController
 
 @page_controller

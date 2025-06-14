@@ -4,14 +4,16 @@ FletX main entry point
 
 import flet as ft
 from typing import Dict, Type, Optional
-from fletx.core.router import FletXRouter
-from fletx.core.route_config import RouteConfig
+from fletx.core.routing.router import FletXRouter
 from fletx.core.page import FletXPage
-from fletx.core.factory import FletXWidgetRegistry
+# from fletx.core.factory import FletXWidgetRegistry
 from fletx.utils.logger import SharedLogger
 from fletx.utils.context import AppContext
-from fletx.utils.exceptions import FletXError
 
+
+####
+##      FLETX APPLICATION
+#####
 class FletXApp:
     """Main application class"""
     
@@ -32,7 +34,7 @@ class FletXApp:
             debug: Debug mode
         """
 
-        self.routes = routes or {}
+        self.routing_module = routes or {}
         self.initial_route = initial_route
         self.theme_mode = theme_mode
         self.debug = debug
@@ -44,8 +46,6 @@ class FletXApp:
         )
         self.logger = SharedLogger.get_logger(__name__)
         
-        # Configure routes
-        RouteConfig.register_routes(self.routes)
         
     def run(self, **kwargs):
         """Deprecated method – use only in controlled environments"""
@@ -73,7 +73,7 @@ class FletXApp:
             AppContext.set_data("logger", self.logger)
             
             # FletX Router Initialization
-            FletXRouter.initialize(page, self.initial_route)
+            FletXRouter.initialize(page, initial_route = self.initial_route)
             
             self.logger.info("FletX Application initialized with success")
             

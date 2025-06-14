@@ -2,6 +2,7 @@
 Logging system for FletX
 """
 
+import os
 import logging
 import sys
 import threading
@@ -16,6 +17,7 @@ class SharedLogger:
     
     _logger: Optional[logging.Logger] = None
     _lock = threading.Lock()
+    debug_mode = os.getenv('FLETX_DEBUG','0') == 1
     
     @classmethod
     def get_logger(cls, name: str = "FletX") -> logging.Logger:
@@ -51,20 +53,25 @@ class SharedLogger:
     
     def debug(self, message: str):
         """Log a debug message"""
-        self.logger.debug(message)
+        if self.debug_mode:
+            self.logger.debug(message)
     
     def info(self, message: str):
         """Log an info level message"""
-        self.logger.info(message)
+        if self.debug_mode:
+            self.logger.info(message)
     
     def warning(self, message: str):
         """Log a warnning level mesage"""
-        self.logger.warning(message)
+        if self.debug_mode:
+            self.logger.warning(message)
     
     def error(self, message: str,* args, **kwargs):
         """Log an error level message"""
-        self.logger.error(message)
+        if self.debug_mode:
+            self.logger.error(message)
     
     def critical(self, message: str):
         """Log a critical level message"""
-        self.logger.critical(message)
+        if self.debug_mode:
+            self.logger.critical(message)

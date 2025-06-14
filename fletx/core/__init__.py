@@ -1,16 +1,16 @@
 from fletx.core.controller import FletXController
 from fletx.core.effects import EffectManager, Effect
 from fletx.core.page import FletXPage
-from fletx.core.route_config import RouteConfig
-from fletx.core.router import FletXRouter
+from fletx.core.route_config import RouteConfig     # Deprecated
 from fletx.core.state import (
     ReactiveDependencyTracker, Observer,
     Reactive, Computed, RxBool, RxDict, RxInt, RxList, RxStr
 )
 from fletx.core.types import (
-    RouteInfo, BindingConfig, BindingType,
+    BindingConfig, BindingType,
     ComputedBindingConfig, FormFieldValidationRule
 )
+from fletx.core.router import FletXRouter
 from fletx.core.widget import FletXWidget
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
     'EffectManager',
     'Effect',
     'FletXPage',
-    'RouteConfig',
+    'RouteConfig',      # Deprecated
     'FletXRouter',
     'ReactiveDependencyTracker',
     'Observer',
@@ -34,5 +34,4 @@ __all__ = [
     'BindingType',
     'ComputedBindingConfig',
     'FormFieldValidationRule',
-    'FletXWidget'
 ]

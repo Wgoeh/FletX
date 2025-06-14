@@ -11,9 +11,9 @@ from fletx.decorators.reactive import (
     reactive_when, reactive_computed
 )
 from fletx.decorators.controllers import page_controller, with_controller
-from fletx.decorators.route import register_route
-
+from fletx.decorators.route import register_router
 from fletx.decorators.effects import use_effect
+from fletx.core.concurency.worker import worker_task, parallel_task
 
 __all__ = [
     # Widget Reactivity
@@ -41,10 +41,14 @@ __all__ = [
     "with_controller",
 
     # Routing
-    "register_route",
+    "register_router",
 
     # Effects
     "use_effect",  
     # "effect",  
     # "use_memo",  
+
+    # Background
+    'worker_task',
+    'parallel_task'
 ]

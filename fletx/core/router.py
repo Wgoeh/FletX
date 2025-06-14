@@ -11,14 +11,21 @@ from threading import Lock
 from urllib.parse import parse_qs, urlparse
 from typing import Dict, Any, Optional, Type, List
 
-from fletx.core.navigation.guards import RouteGuard
-from fletx.core.navigation.middleware import NavigationMiddleware
-from fletx.core.navigation.transitions import RouteTransition
+from fletx.core.routing.guards import RouteGuard
+from fletx.core.routing.middleware import RouteMiddleware
+from fletx.core.routing.transitions import RouteTransition
 from fletx.core.route_config import RouteConfig
 from fletx.core.page import FletXPage
 from fletx.utils.exceptions import RouteNotFoundError, NavigationError
-from fletx.core.types import RouteInfo
+from fletx.core.routing.models import RouteInfo
 from fletx.utils import get_logger
+
+import warnings
+
+warnings.warn(
+    'fletx.core.router.FletXRouter is deprecated and will be removed in next releases.'
+    'Use fletx.routing.get_router instead.'
+)
 
 
 ####
@@ -37,7 +44,7 @@ class FletXRouter:
     _current_route: str = "/"
     _route_history: List[str] = []
     _logger = get_logger('FletX.Router')
-    _middleware = NavigationMiddleware()
+    _middleware = RouteMiddleware()
     _guards: Dict[str, List[RouteGuard]] = {}
 
     @classmethod
@@ -80,6 +87,12 @@ class FletXRouter:
         _redirect_depth: int = 0  # Internal recursion protection
     ):
         """Enables complex and flexible navigation between routes."""
+
+        warnings.warn(
+            'fletx.core.router.FletXRouter.to() is deprecated '
+            'and will be removed in next releases.'
+            'Use fletx.routing.navigate() instead.'
+        )
 
         MAX_REDIRECT_DEPTH = 10 
         
@@ -131,7 +144,7 @@ class FletXRouter:
                     )
 
             # 6. Middleware before navigation
-            redirect = cls._middleware.run_before(route_info)
+            redirect = cls._middleware.before_navigation(route_info,None)
             if redirect and redirect != clean_path:  # Avoid auto-redirection
 
                 return cls.to(

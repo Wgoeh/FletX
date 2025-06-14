@@ -1,5 +1,5 @@
-from fletx.core.navigation.guards import RouteGuard
-from fletx.core.types import RouteInfo
+from fletx.core.routing.guards import RouteGuard
+from fletx.core.routing.models import RouteInfo
 
 
 class AuthGuard(RouteGuard):

@@ -10,7 +10,7 @@ from typing import (
 )
 from abc import ABC, abstractmethod
 from fletx.core.controller import FletXController
-from fletx.core.types import RouteInfo
+from fletx.core.routing.models import RouteInfo
 from fletx.core.di import DI
 from fletx.core.effects import EffectManager
 # from fletx.decorators import use_effect as useEffect
