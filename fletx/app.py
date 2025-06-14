@@ -19,7 +19,6 @@ class FletXApp:
     
     def __init__(
         self, 
-        routes: Optional[Dict[str, Type[FletXPage]]] = None,
         initial_route: str = "/",
         theme_mode: ft.ThemeMode = ft.ThemeMode.SYSTEM,
         debug: bool = False
@@ -34,7 +33,6 @@ class FletXApp:
             debug: Debug mode
         """
 
-        self.routing_module = routes or {}
         self.initial_route = initial_route
         self.theme_mode = theme_mode
         self.debug = debug

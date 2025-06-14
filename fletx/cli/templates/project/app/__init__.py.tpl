@@ -1,5 +1,5 @@
 """
-{{ project_name }} - A FletX Application
+{{ project_name | pascal_case }} - A FletX Application
 
 This package contains the main application components.
 """
