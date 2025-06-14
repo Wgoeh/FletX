@@ -1,5 +1,5 @@
 """
-Système de Worker parallèle avec typage fort
+Parallel worker system.
 Similar to Qt's QRunnable but more flexible and type-safe
 """
 

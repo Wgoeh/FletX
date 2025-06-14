@@ -8,6 +8,7 @@ from fletx.core import (
     RxBool, RxStr, FletXPage,
     FormFieldValidationRule, RxDict
 )
+from fletx.navigation import router_config
 
 ####
 ##      TWO WAY REACTIVE TEXT FIELD
@@ -172,9 +173,15 @@ def main(page: Page):
     page.title = "Reactive Forms Example"
     page.theme_mode = ThemeMode.LIGHT
     page.add(RegistrationPage().build())             # Add the CounterPage to the FletX page
-    app = FletXApp(
-        routes = {"/": RegistrationPage}
+
+    # Defining route
+    router_config.add_route(
+        **{
+            'path': '/',
+            'component': RegistrationPage
+        }
     )
+    app = FletXApp()
     app._main(page)                             # Initialize the FletX application with the page
 
 if __name__ == "__main__":
