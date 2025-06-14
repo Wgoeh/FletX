@@ -19,7 +19,7 @@ FletX brings Flutter's beloved **GetX** patterns to Python, combining Flet's UI 
 Perfect for building **desktop, web, and mobile apps** with Python at lightning speed.
 
 ---
-## Showcases
+## Showcase
 
 <div align="center">
   <table>
@@ -98,6 +98,7 @@ from fletx.app import FletXApp
 from fletx.core import (
     FletXPage, FletXController, RxInt, RxStr
 )
+from fletx.navigation import router_config
 from fletx.decorators import (
     simple_reactive
 )
@@ -127,7 +128,7 @@ class CounterPage(FletXPage):
                 MyReactiveText(rx_text=self.ctrl.count, size=200, weight="bold"),
                 ft.ElevatedButton(
                     "Increment",
-                    on_click=lambda e: self.ctrl.count.increment()  # Auto UI update
+                    on_click = lambda e: self.ctrl.count.increment()  # Auto UI update
                 )
             ]
         )
@@ -137,9 +138,15 @@ def main(page: ft.Page):
     page.title = "Counter Example"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.add(CounterPage().build())    # Add the CounterPage to the FletX page
-    app = FletXApp(
-        routes = {"/": CounterPage}
+
+    # Defining route
+    router_config.add_route(
+        **{
+            'path': '/',
+            'component': CounterPage
+        }
     )
+    app = FletXApp()
     app._main(page)                    # Initialize the FletX application with the page
 
 if __name__ == "__main__":
@@ -194,17 +201,27 @@ class SearchController:
 ### 2. Smart Routing
 ```python
 # Define routes
-routes = {
-    "/": HomePage,
-    "/profile/<:user_id>": ProfilePage,  # Dynamic route
-    "/settings": SettingsPage
-}
+from flex.navigation import router_config, navigate
 
+# 1. simple routing
+router_config.add_routes([
+    {"path": "/", "component": HomePage},
+    {"path": "/settings", "component": SettingsPage}
+])
+
+# 2. Dynamic routes with parameters
+router_config.add_routes([
+    {
+        "path": "/users/:id",
+        "component": lambda route: UserDetailPage(route.params['id'])
+    },
+    {
+        "path": "/products/*category",
+        "component": lambda route: ProductsPage(route.params['category'])
+    }
+])
 # Navigate programmatically
-FletXRouter.to("/profile/123", transition=SlideTransition())
-
-# With route guards
-FletXRouter.add_route_guard("/admin", AdminGuard())
+navigate("/users/123")
 ```
 
 ### 3. Dependency Injection
@@ -233,26 +250,115 @@ from fletx.decorators import (
 
 ## Advanced Usage 🛠️
 
-### Custom Transitions
+### Subrouters
+1. Basic usage
 ```python
-from fletx.core.navigation.transitions import RouteTransition
+# Create a separate router for admin module
+admin_module = ModuleRouter()
+admin_module.name = 'admin'
 
-FletXRouter.to(
-    "/dashboard",
-    transition=RouteTransition(
-        type="fade",
-        duration=500
-    )
-)
+# Define routes for admin_module
+admin_module.add_routes([
+    {"path": "/", "component": AdminHomePage},
+    {"path": "/users", "component": AdminUsersPage},
+    {"path": "/settings", "component": AdminSettingsPage}
+])
+
+# Register the admin routing module to the main router config 
+router_config.add_module_routes("/admin", admin_module)
+
+# URLs become:
+# /admin/ -> AdminHomePage
+# /admin/users -> AdminUsersPage
+# /admin/settings -> AdminSettingsPage
 ```
 
-### Middleware
+2. Advanced Usage (OOP)
 ```python
-class AnalyticsMiddleware:
-    def run_before(self, route_info):
-        log_navigation(route_info.path)
+admin_routes = [
+    {"path": "/", "component": AdminHomePage},
+    {"path": "/users", "component": AdminUsersPage},
+    {"path": "/settings", "component": AdminSettingsPage}
+]
 
-FletXRouter.add_middleware(AnalyticsMiddleware())
+@register_router
+class AdminRouter(ModuleRouter):
+    """My Admin Routing Module."""
+
+    name = 'Admin'
+    base_path = '/admin'
+    is_root = false
+    routes = admin_routes
+    sub_routers = []
+
+@register_router
+class MyAppRouter(ModuleRouter):
+    """My Application Routing Module."""
+
+    name = 'MyAppRouter'
+    base_path = '/'
+    is_root = True
+    routes = []
+    sub_routers = [AdminRouter]
+```
+
+### Route Transitions
+```python
+from fletx.core.navigation.transitions import (
+    RouteTransition, TransitionType
+)
+
+routes = [
+    {
+        'path': '/login',
+        'component': LoginPage,
+        'meta':{
+            'transition': RouteTransition(
+                transition_type = TransitionType.ZOOM_IN,
+                duration = 350
+            )
+        }
+    },
+    {
+        'path': '/dashboard',
+        'component': DashboardHomePage,
+        'meta':{
+            'transition': RouteTransition(
+                transition_type = TransitionType.FLIP_HORIZONTAL,
+                duration = 350
+            )
+        }
+    },
+]
+```
+
+### Middleware and Guards
+```python
+
+router_config.add_route(
+    path="/profile",
+    component=ProfilePage,
+    guards = [AuthGuard()],
+    middleware=[AnalyticsMiddleware()]
+)
+
+# Or
+routes = [
+    {
+        'path': '/dashboard',
+        'component': DashboardHomePage,
+        'guards': [AuthGuard()],
+        'middlewares': [AnalyticsMiddleware()],
+        'meta':{
+            'transition': RouteTransition(
+                transition_type = TransitionType.FLIP_HORIZONTAL,
+                duration = 350
+            )
+        }
+    },
+    ...
+]
+...
 ```
 
 ---
@@ -294,15 +400,19 @@ FletXRouter.add_middleware(AnalyticsMiddleware())
 
 - [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
 - [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
+- [x] Improve Actual routing system (enabling devs to create subrouters for modules)
+- [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
+- [ ] Fix Route Transition Issues 
+
+### Todo
+
+- [ ] Improve `FletXController` class making it more flexible
+- [ ] Add Http Wrapper (using `httpx` or `aiohttp`)
+- [ ] Add Services generation template and command to the CLI
 - [ ] Add Ready to use Reactive Widgets or components
-- [ ] Write Documentation
-
-### For the next version
-
-- [ ] Improve Actual routing system (enabling devs to create subrouters for modules)
 - [ ] Add Screen Management System for Page Widgets 
+- [ ] Write Documentation
 - [ ] Enhanced dev tools
-- [ ] VS Code extension
 
 ---
 
