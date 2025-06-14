@@ -1,6 +1,6 @@
 # Core dependencies
 flet>=0.21.0
-fletx>={{ fletx_version }}
+fletxr>={{ fletx_version }}
 
 # Development dependencies
 pytest>=7.0.0

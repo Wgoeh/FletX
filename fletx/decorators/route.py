@@ -7,15 +7,19 @@ definitions within the application.
 """
 
 from typing import Type, Callable
-from fletx.core.route_config import RouteConfig
-from fletx.core.page import FletXPage
+from fletx.core.routing.config import (
+    router_config, ModuleRouter
+)
 
 
-####    REGISTER ROUTE
-def register_route(path: str):
-    """Decorator to automatically register a route"""
-
-    def decorator(page_class: Type[FletXPage]):
-        RouteConfig.register_route(path, page_class)
-        return page_class
-    return decorator
+####    REGISTER ROUTER
+def register_router(cls: ModuleRouter):
+    """Decorator that automatically registers module routes"""
+    # Initialisation du routeur parent
+    router = cls()
+    
+    # Enregistrement dans la config globale
+    if cls.is_root:
+        router_config.add_module_routes('', router)
+    
+    return cls

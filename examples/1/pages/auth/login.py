@@ -2,7 +2,7 @@ from flet import *
 from ..shared.components import ReactivePasswordField
 from fletx import FletX
 from fletx.core.page import FletXPage
-from fletx.core.router import FletXRouter
+from fletx.navigation import navigate
 from fletx.core.state import RxBool
 from .controller import AuthController
 from .guards import AuthGuard
@@ -317,6 +317,6 @@ class LoginPage(FletXPage):
         self.controller.login(
             self.email_field.value,
             self.password_field.value,
-            on_success=lambda: FletXRouter.to("/dashboard"),
+            on_success=lambda: navigate("/dashboard"),
             on_failure=lambda: print("Échec de connexion")
         )

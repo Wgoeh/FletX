@@ -1,5 +1,6 @@
-from fletx.app import FletXApp
+import asyncio
 import flet as ft
+from fletx.app import FletXApp
 from routes import routes
 
 def main(page: ft.Page):
