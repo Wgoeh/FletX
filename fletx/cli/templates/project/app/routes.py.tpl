@@ -5,9 +5,27 @@ Version: {{ version }}
 
 
 # Import your pages here
+from fletx.navigation import (
+    ModuleRouter, TransitionType, RouteTransition
+)
+from fletx.decorators import register_router
+
 from .pages.counter import CounterPage
 
-# Define {{ project_name }} routes here
-routes = {
-    '/': CounterPage
-}
+# Define {{ project_name | pascal_case }} routes here
+routes = [
+    {
+        'path': '/',
+        'component': CounterPage,
+    },
+]
+
+@register_router
+class {{ project_name | pascal_case }}Router(ModuleRouter):
+    """{{ project_name }} Routing Module."""
+
+    name = '{{ project_name }}'
+    base_path = '/'
+    is_root = True
+    routes = routes
+    sub_routers = []

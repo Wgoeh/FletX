@@ -1,7 +1,7 @@
 import asyncio
 import flet as ft
 from fletx.app import FletXApp
-from routes import routes
+from routes import MyAppRouter
 
 def main(page: ft.Page):
     # Configuration de la page
@@ -24,7 +24,6 @@ def main(page: ft.Page):
     
     # Initialisation de l'application FletX
     app = FletXApp(
-        routes = routes,
         initial_route = "/login",
         debug = True
     )

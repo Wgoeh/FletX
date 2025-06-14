@@ -1,5 +1,5 @@
 """
-{{ project_name }} Application Components module.
+{{ project_name | pascal_case }} Application Components module.
 
 This module contains reusable widgets and components
 Version: {{ version }}

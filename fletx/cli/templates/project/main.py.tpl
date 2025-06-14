@@ -8,7 +8,7 @@ Version: {{ version }}
 
 import flet as ft
 from fletx.app import FletXApp
-from app.routes import routes
+from app.routes import {{ project_name | pascal_case }}Router
 
 def main(page: ft.Page):
     """Main entry point for the Flet application."""
@@ -32,7 +32,6 @@ def main(page: ft.Page):
     
     # FletX Application Initialization
     app = FletXApp(
-        routes = routes,
         initial_route = "/",
         debug = True
     )

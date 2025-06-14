@@ -1,5 +1,5 @@
 """
-{{ project_name }} Application Models module.
+{{ project_name | pascal_case }} Application Models module.
 
 This module contains data models.
 Version: {{ version }}

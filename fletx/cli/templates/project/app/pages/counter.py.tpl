@@ -18,7 +18,7 @@ class CounterPage(FletXPage):
             horizontal_alignment = ft.CrossAxisAlignment.CENTER,
             controls = [
                 ft.Text(
-                    "{{ project_name }} Counter",
+                    "{{ project_name | pascal_case }} Counter",
                     size = 20,
                     weight = ft.FontWeight.BOLD
                 ),
