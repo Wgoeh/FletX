@@ -54,8 +54,8 @@ class NewProjectCommand(TemplateCommand):
         )
         parser.add_argument(
             "--python-version",
-            default="3.9",
-            help="Minimum Python version required (default: 3.9)"
+            default="3.12",
+            help="Minimum Python version required (default: 3.12)"
         )
         parser.add_argument(
             "--overwrite",
@@ -77,7 +77,7 @@ class NewProjectCommand(TemplateCommand):
         author = kwargs.get("author", os.environ.get("USER", "Developer"))
         description = kwargs.get("description", f"A new FletX project: {name}")
         version = kwargs.get("version", "0.1.0")
-        python_version = kwargs.get("python_version", "3.8")
+        python_version = kwargs.get("python_version", "3.12")
         overwrite = kwargs.get("overwrite", False)
         no_install = kwargs.get("no_install", False)
         
