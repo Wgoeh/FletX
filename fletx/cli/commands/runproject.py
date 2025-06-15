@@ -26,88 +26,77 @@ class RunCommand(BaseCommand):
 
         parser.add_argument(
             "target",
-            nargs="?",
-            default="main.py",
-            help="Python file to run (default: main.py)"
+            nargs = "?",
+            default = "main.py",
+            help = "Python file to run (default: main.py)"
         )
         parser.add_argument(
             "--host",
-            default="localhost",
-            help="Host to bind to (default: localhost)"
+            default = "localhost",
+            help = "Host to bind to (default: localhost)"
         )
         parser.add_argument(
             "--port",
-            type=int,
-            default=8550,
-            help="Port to bind to (default: 8550)"
+            type = int,
+            default = 8550,
+            help = "Port to bind to (default: 8550)"
         )
         parser.add_argument(
             "--debug",
-            action="store_true",
-            help="Run in debug mode"
+            action = "store_true",
+            help = "Run in debug mode"
         )
         parser.add_argument(
-            "--hot-reload",
-            action="store_true",
-            help="Enable hot reload for development"
+            "--watch",
+            action = "store_true",
+            help = "Enable recursive script directory watch for hot reload in development"
         )
         parser.add_argument(
             "--web",
-            action="store_true",
-            help="Force web mode"
+            action = "store_true",
+            help = "Open app in a web browser"
         )
         parser.add_argument(
             "--desktop",
-            action="store_true",
-            help="Force desktop mode"
+            action = "store_true",
+            help = "Force desktop mode"
         )
         parser.add_argument(
-            "--mobile",
-            action="store_true",
-            help="Force mobile mode"
+            "--android",
+            action = "store_true",
+            help = "Open app on Android divice"
         )
         parser.add_argument(
-            "--view",
-            choices=["flet_app", "web_browser"],
-            help="View mode (flet_app or web_browser)"
+            "--ios",
+            action = "store_true",
+            help = "Open app on iOS divice"
         )
         parser.add_argument(
             "--assets-dir",
-            help="Path to assets directory"
+            help = "Path to assets directory"
         )
         parser.add_argument(
-            "--upload-dir",
-            help="Path to upload directory"
-        )
-        parser.add_argument(
-            "--route-url-strategy",
-            choices=["path", "hash"],
-            default="path",
-            help="URL strategy for routing (default: path)"
-        )
-        parser.add_argument(
-            "--use-color-emoji",
-            action="store_true",
-            help="Use color emoji"
+            "--ignore-dir",
+            help = "Path to upload directory"
         )
         parser.add_argument(
             "--env",
-            action="append",
-            help="Environment variables in KEY=VALUE format"
+            action = "append",
+            help = "Environment variables in KEY=VALUE format"
         )
         parser.add_argument(
             "--requirements",
-            help="Path to requirements.txt file"
+            help = "Path to requirements.txt file"
         )
         parser.add_argument(
             "--install-deps",
-            action="store_true",
-            help="Install dependencies before running"
+            action = "store_true",
+            help = "Install dependencies before running"
         )
         parser.add_argument(
             "--verbose",
-            action="store_true",
-            help="Verbose output"
+            action = "store_true",
+            help = "Verbose output"
         )
     
     def handle(self, **kwargs) -> None:
@@ -117,15 +106,13 @@ class RunCommand(BaseCommand):
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 8550)
         debug = kwargs.get("debug", False)
-        hot_reload = kwargs.get("hot_reload", False)
+        watch = kwargs.get("watch", False)
         web = kwargs.get("web", False)
         desktop = kwargs.get("desktop", False)
-        mobile = kwargs.get("mobile", False)
-        view = kwargs.get("view")
+        android = kwargs.get("android", False)
+        ios = kwargs.get("ios", False)
         assets_dir = kwargs.get("assets_dir")
-        upload_dir = kwargs.get("upload_dir")
-        route_url_strategy = kwargs.get("route_url_strategy", "path")
-        use_color_emoji = kwargs.get("use_color_emoji", False)
+        ignore_dir = kwargs.get("ignore_dir")
         env_vars = kwargs.get("env", [])
         requirements = kwargs.get("requirements")
         install_deps = kwargs.get("install_deps", False)
@@ -146,8 +133,8 @@ class RunCommand(BaseCommand):
         
         # Build command arguments
         cmd_args = self._build_command_args(
-            target_path, host, port, debug, hot_reload, web, desktop, mobile,
-            view, assets_dir, upload_dir, route_url_strategy, use_color_emoji
+            target_path, host, port, debug, watch, web, desktop, android,
+            ios, assets_dir, ignore_dir
         )
         
         # Run the project
@@ -280,16 +267,18 @@ class RunCommand(BaseCommand):
     
     def _build_command_args(
         self, target_path: Path, host: str, port: int, debug: bool,
-        hot_reload: bool, web: bool, desktop: bool, mobile: bool,
-        view: Optional[str], assets_dir: Optional[str], upload_dir: Optional[str],
-        route_url_strategy: str, use_color_emoji: bool
+        watch: bool, web: bool, desktop: bool, android: bool, ios: bool,
+        assets_dir: Optional[str], ignore_dir: Optional[str],
     ) -> List[str]:
         """Build the command arguments for running the project."""
 
-        cmd_args = [sys.executable, str(target_path)]
+        cmd_args = ['flet', str(target_path)]
         
         # Add Flet-specific arguments if the target file uses them
         flet_args = []
+
+        if watch:
+            flet_args.append("-r")
         
         if host != "localhost":
             flet_args.extend(["--host", host])
@@ -301,25 +290,21 @@ class RunCommand(BaseCommand):
             flet_args.append("--web")
 
         elif desktop:
-            flet_args.append("--desktop")
+            # No thing to do, flet will launch the app in a window by default
+            # flet_args.append("")
+            pass
 
-        elif mobile:
-            flet_args.append("--mobile")
-        
-        if view:
-            flet_args.extend(["--view", view])
+        if android:
+            flet_args.append("--android")
+
+        elif ios:
+            flet_args.append("--ios")
         
         if assets_dir:
-            flet_args.extend(["--assets-dir", assets_dir])
+            flet_args.extend(["--assets", assets_dir])
         
-        if upload_dir:
-            flet_args.extend(["--upload-dir", upload_dir])
-        
-        if route_url_strategy != "path":
-            flet_args.extend(["--route-url-strategy", route_url_strategy])
-        
-        if use_color_emoji:
-            flet_args.append("--use-color-emoji")
+        if ignore_dir:
+            flet_args.extend(["--upload-dir", ignore_dir])
         
         # Check if the target file supports these arguments
         if self._supports_flet_args(target_path):
@@ -355,7 +340,7 @@ class RunCommand(BaseCommand):
         try:
             print(f"Starting FletX application...")
             print(f"Target: {cmd_args[1]}")
-            print("Press Ctrl+C to stop the application.")
+            print("\nPress Ctrl+C to stop the application.")
             print("-" * 50)
             
             # Run the subprocess

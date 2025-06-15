@@ -37,8 +37,6 @@ class FletXWidget(ABC):
         # self.content = self.build()
         super().__init__()
         
-        
-
     def __init_subclass__(cls, **kwargs):
         """Automatically register widget classes with FletXWidgetRegistry"""
 
@@ -51,7 +49,6 @@ class FletXWidget(ABC):
         FletXWidgetRegistry.register(cls)
         cls.page.update()
         
-
     @classmethod
     @property
     def logger(cls):

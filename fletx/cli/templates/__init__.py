@@ -144,7 +144,7 @@ class TemplateManager:
         """Recursively process a template directory."""
 
         for item in template_path.iterdir():
-            if item.name.startswith('.'):
+            if item.name.startswith('.') and not item.name.endswith('.tpl'):
                 continue
             
             # Process the item name through template engine

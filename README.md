@@ -1,3 +1,7 @@
+<p align = 'center'>
+    <img src='fletx.png?raw=true' height = '100'></img>
+</p>
+
 # FletX 🚀  
 **The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
@@ -7,6 +11,7 @@
 [![Discord](https://img.shields.io/discord/v6trjD8m)](https://discord.gg/v6trjD8m)
 
 ## Why FletX? ✨
+
 
 FletX brings Flutter's beloved **GetX** patterns to Python, combining Flet's UI capabilities with:
 
@@ -57,6 +62,8 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 <img src = "architecture.svg">
 
 ## Quick Start 🏁
+
+> NOTE: FletX currently supports Python 3.12 only. Compatibility with newer versions is in progress — we're actively working to expand support soon.
 
 ### Installation
 ```bash
@@ -401,7 +408,7 @@ routes = [
 - [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
 - [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
 - [x] Improve Actual routing system (enabling devs to create subrouters for modules)
-- [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
+- [ ] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
 - [ ] Fix Route Transition Issues 
 
 ### Todo
