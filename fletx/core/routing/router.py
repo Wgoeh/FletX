@@ -21,7 +21,8 @@ from fletx.core.routing.config import (
     RouteGuard, RouteMiddleware
 )
 from fletx.core.page import FletXPage
-from fletx.core.routing.transitions import RouteTransition
+from fletx.core.routing.transitions import RouteTransition, TransitionType
+from fletx.utils.context import AppContext
 from fletx.utils.exceptions import RouteNotFoundError, NavigationError
 from fletx.core.concurency.worker import (
     worker_task, parallel_task, Priority, 
@@ -289,7 +290,7 @@ class FletXRouter:
         self.state.forward_stack.append(self.state.current_route)
         
         # Use async task for navigation
-        asyncio.run(self.navigate(previous_route.path, replace = True))
+        self.navigate(previous_route.path, replace = True)
         return True
     
     def go_forward(self) -> bool:
@@ -489,16 +490,18 @@ class FletXRouter:
     @worker_task(priority = Priority.HIGH)
     def _apply_transition_and_update(
         self, 
-        component, 
+        component: FletXPage, 
         route_info: RouteInfo, 
         transition: Optional[RouteTransition]
     ):
         """Apply transition and update the UI."""
 
-        if hasattr(component, 'build'):
-            content = component.build()
-        else:
-            content = component
+        content = component
+
+        if hasattr(component, '_build_page'):
+            content._build_page()
+            # component.__page = self.page
+            # component.update()
         
         # Handle different navigation modes
         if self.state.navigation_mode == NavigationMode.VIEWS:
@@ -506,14 +509,14 @@ class FletXRouter:
             # Use Flet Views
             view = ft.View(
                 route = route_info.path,
-                controls=[content] if not isinstance(content, list) else content
+                controls = [content] if not isinstance(content, list) else content
             )
             self.page.views.append(view)
             self.state.active_views.append(view)
 
         else:
             # Direct page update
-            if transition:
+            if transition and transition.type != TransitionType.NONE:
                 content = asyncio.run(
                     transition.apply(
                         self.page, 

@@ -9,7 +9,7 @@ class AuthController(FletXController):
         self.is_authenticated = RxBool(False)
     
     def login(self, email: str, password: str, on_success: callable, on_failure: callable):
-        # Simulation d'authentification
+        # Simulate Authentication
         if email == "a" and password == "a":
             self.current_user.value = email
             self.is_authenticated.value = True

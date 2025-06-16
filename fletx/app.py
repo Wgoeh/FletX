@@ -54,6 +54,17 @@ class FletXApp:
             DeprecationWarning
         )
         ft.app(target=self._main, **self.kwargs)
+
+    def run_event_loop(self):
+        """ Run The global event loop """
+
+        import asyncio
+        import uvloop
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+        loop = uvloop.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        return loop
     
     def _main(self, page: ft.Page):
         """Main entry point for Flet"""

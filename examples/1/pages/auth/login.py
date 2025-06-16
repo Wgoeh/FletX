@@ -12,6 +12,9 @@ class LoginPage(FletXPage):
     hide_password: RxBool = RxBool(True)
 
 
+    # def on_tap(self,callback):
+    #     return super().on_tap()
+
     def build(self):
         # Récupère le contrôleur
         self.controller = FletX.find(AuthController) or AuthController()
@@ -309,6 +312,8 @@ class LoginPage(FletXPage):
             )
         )
     def on_login(self, e):
+        print('login....................................................')
+        navigate("/dashboard")
         # Validation basique
         if not self.email_field.value or not self.password_field.value:
             return

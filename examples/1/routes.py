@@ -24,7 +24,7 @@ routes = [
         'component': DashboardHomePage,
         'meta':{
             'transition': RouteTransition(
-                transition_type = TransitionType.FLIP_HORIZONTAL,
+                transition_type = TransitionType.SLIDE_LEFT,
                 duration = 350
             )
         }
