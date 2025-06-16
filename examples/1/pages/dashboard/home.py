@@ -1,6 +1,8 @@
 from flet import * 
 from fletx import FletX
 from fletx.core import FletXPage, FletXRouter
+from fletx.navigation import navigate, go_back
+
 from .controller import DashboardController
 from ..shared.components import (
     TaskComponent
@@ -8,11 +10,11 @@ from ..shared.components import (
 
 class DashboardHomePage(FletXPage):
     def __init__(self):
-        super().__init__()
         self.controller = FletX.find(DashboardController) or DashboardController()
+        super().__init__()
 
     def _safe_refresh(self, e):
-        """Méthode sécurisée sans risque de récursion"""
+        """safe refresh"""
         if not hasattr(self, '_refreshing'):
             self._refreshing = True
             self.controller.load_data()
@@ -60,7 +62,7 @@ class DashboardHomePage(FletXPage):
                                                 icon = Icons.MENU_OUTLINED,
                                                 bgcolor = Colors.BLACK45,
                                                 icon_color = Colors.WHITE,
-                                                on_click = self.on_logout
+                                                on_click = lambda _: go_back()
 
                                                 # style
 

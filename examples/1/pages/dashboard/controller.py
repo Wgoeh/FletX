@@ -1,6 +1,8 @@
 from fletx.core import (
     FletXController,RxStr, RxList
 )
+from fletx.core.concurency import Priority
+from fletx.decorators import worker_task
 from models.user import User
 
 class DashboardController(FletXController):
@@ -29,8 +31,9 @@ class DashboardController(FletXController):
     def load_data(self):
         # Simulation chargement async
         import asyncio
-        async def load():
-            await asyncio.sleep(1)
+        @worker_task(priority = Priority.CRITICAL)
+        def load():
+            asyncio.sleep(1)
             self.username.value = "Admin"
             self.todos.value = [
                 {
@@ -75,7 +78,7 @@ class DashboardController(FletXController):
                 }
             ]
         
-        asyncio.run(load())
+        load.run_and_wait()
     
     def logout(self):
         from fletx import FletX

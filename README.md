@@ -408,14 +408,15 @@ routes = [
 - [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
 - [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
 - [x] Improve Actual routing system (enabling devs to create subrouters for modules)
-- [ ] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
+- [x] FLetXPage enhancement (hooks, events and more)
+- [ ] Improve `FletXController` class making it more flexible
 - [ ] Fix Route Transition Issues 
 
 ### Todo
 
-- [ ] Improve `FletXController` class making it more flexible
 - [ ] Add Http Wrapper (using `httpx` or `aiohttp`)
 - [ ] Add Services generation template and command to the CLI
+- [ ] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
 - [ ] Add Ready to use Reactive Widgets or components
 - [ ] Add Screen Management System for Page Widgets 
 - [ ] Write Documentation
