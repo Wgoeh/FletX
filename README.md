@@ -8,7 +8,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/FletXr)](https://pypi.org/project/FletXr/)
 [![Downloads](https://static.pepy.tech/badge/FletXr)](https://pepy.tech/project/FletXr)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Discord](https://img.shields.io/discord/v6trjD8m)](https://discord.gg/v6trjD8m)
+[![Discord](https://img.shields.io/discord/1381155066232176670)](https://discord.gg/GRez7BTZVy)
 
 ## Why FletX? ✨
 
@@ -383,7 +383,7 @@ routes = [
 ## Community & Support 💬
 
 - [Documentation](https://fletx.dev/docs) 📚 (not available for now.)
-- [Discord Community](https://discord.gg/v6trjD8m) 💬
+- [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
 
 ---
@@ -409,14 +409,14 @@ routes = [
 - [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
 - [x] Improve Actual routing system (enabling devs to create subrouters for modules)
 - [x] FLetXPage enhancement (hooks, events and more)
-- [ ] Improve `FletXController` class making it more flexible
-- [ ] Fix Route Transition Issues 
+- [x] Improve `FletXController` class making it more flexible
+- [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
+- [x] Fix Route Transition Issues 
+- [x] Add Http Wrapper (using `httpx` or `aiohttp`)
 
 ### Todo
 
-- [ ] Add Http Wrapper (using `httpx` or `aiohttp`)
 - [ ] Add Services generation template and command to the CLI
-- [ ] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
 - [ ] Add Ready to use Reactive Widgets or components
 - [ ] Add Screen Management System for Page Widgets 
 - [ ] Write Documentation

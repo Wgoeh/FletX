@@ -169,6 +169,7 @@ class FletXPage(ft.Container, ABC):
     
     def did_mount(self):
         """Called when the page is mounted"""
+        
         self._state = PageState.MOUNTED
         self._mount_time = datetime.now()
         self._is_mounted = True

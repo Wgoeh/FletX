@@ -6,6 +6,7 @@ readme = "README.md"
 authors = [{ name = "#Einswilli", email = "einswilligoeh@email.com" }]
 requires-python = ">=3.12"
 dependencies = [
+    "aiohttp>=3.12.13",
     "flet[all]>=0.28.3",
     "httpx>=0.28.1",
     "logging>=0.4.9.6",
