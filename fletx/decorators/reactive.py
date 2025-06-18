@@ -21,7 +21,8 @@ from fletx.core.state import (
     Reactive, ReactiveDependencyTracker, Computed,
     Observer
 )
-from fletx.utils import get_logger, get_page
+from fletx.utils import get_logger, get_event_loop
+
 
 T = TypeVar('T')
 F = TypeVar('F', bound = Callable[..., Any])
@@ -231,14 +232,20 @@ def reactive_debounce(delay: float):
                         await func(*args, **kwargs)
                     else:
                         func(*args, **kwargs)
+
                 except asyncio.CancelledError:
                     logger.debug(f"Debounced call {call_id} was cancelled")
+
+                except Exception as e:
+                    logger.exception(f"Error in debounced function: {e}")
+
                 finally:
                     if call_id in pending_calls:
                         del pending_calls[call_id]
-            
+
+            # loop = get_event_loop()
             # Schedule new call
-            task = asyncio.create_task(delayed_call())
+            task = get_event_loop().create_task(delayed_call())
             pending_calls[call_id] = task
             
             logger.debug(f"Debounced {func.__name__} with delay {delay}s")

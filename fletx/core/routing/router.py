@@ -22,13 +22,12 @@ from fletx.core.routing.config import (
 )
 from fletx.core.page import FletXPage
 from fletx.core.routing.transitions import RouteTransition, TransitionType
-from fletx.utils.context import AppContext
 from fletx.utils.exceptions import RouteNotFoundError, NavigationError
 from fletx.core.concurency.worker import (
     worker_task, parallel_task, Priority, 
     WorkerPool, WorkerPoolConfig
 )
-from fletx.utils import get_logger
+from fletx.utils import get_logger, get_event_loop
 
 
 ####
@@ -104,9 +103,9 @@ class FletXRouter:
 
         cls._instance = cls(page, config)
         # Navigate to current root
-        # asyncio.run(
-        cls._instance.navigate(initial_route, replace = True),
-        # )
+        get_event_loop().create_task(
+            cls._instance.navigate(initial_route, replace = True)
+        )
             
         return cls._instance
     
@@ -127,9 +126,9 @@ class FletXRouter:
         if self.state.navigation_mode in [NavigationMode.NATIVE, NavigationMode.HYBRID]:
             self.logger.debug(f"Flet route changed to: {e.route}")
             # Sync with our internal state
-            # asyncio.run(
-            self.navigate(e.route, sync_only=True)
-            # )
+            get_event_loop().create_task(
+                self.navigate(e.route, sync_only=True)
+            )
     
     def _on_flet_view_pop(self, e: ft.ViewPopEvent):
         """Handle Flet's native view pop events."""
@@ -139,7 +138,7 @@ class FletXRouter:
             self.go_back()
     
     # @worker_task
-    def navigate(
+    async def navigate(
         self,
         route: str,
         *,
@@ -187,91 +186,77 @@ class FletXRouter:
             if sync_only:
                 self.state.current_route = route_info
                 return NavigationResult.SUCCESS
-            
-            # Create worker pool for concurency
-            with WorkerPool() as pool:
-                # FIrst Sublit tasks
 
-                # It seems like our Workerpool don't work as expected 😅
-                # so we cannot share it between tasks for now. I'll fix it later. 
-                
-                # self._check_deactivation_guards.set_pool(pool)
-                # self._check_activation_guards.set_pool(pool)
-                # self._run_before_middleware.set_pool(pool)
-                # self._resolve_route_data.set_pool(pool)
-                # self._create_component.set_pool(pool)
-                # self._run_after_middleware.set_pool(pool)
+            # Check deactivation guards for current route
+            if not await self._check_deactivation_guards():
+                return NavigationResult.BLOCKED_BY_GUARD
+        
+            # Check activation guards for target route
+            guard_result = await self._check_activation_guards(route_info, route_def)
+            if guard_result != NavigationResult.SUCCESS:
+                return guard_result
+        
+            # Run middleware before navigation
+            middleware_result = await self._run_before_middleware(
+                self.state.current_route, route_info
+            )
+            if middleware_result:
 
-                # Check deactivation guards for current route
-                if not self._check_deactivation_guards.run_and_wait():
-                    return NavigationResult.BLOCKED_BY_GUARD
-            
-                # Check activation guards for target route
-                guard_result = self._check_activation_guards.run_and_wait(route_info, route_def)
-                if guard_result != NavigationResult.SUCCESS:
-                    return guard_result
-            
-                # Run middleware before navigation
-                middleware_result = self._run_before_middleware.run_and_wait(
-                    self.state.current_route, route_info
+                # Middleware requested redirect
+                return await self.navigate(
+                    middleware_result.route,
+                    data = middleware_result.data,
+                    replace = middleware_result.replace,
+                    transition = middleware_result.transition
                 )
-                if middleware_result:
-
-                    # Middleware requested redirect
-                    return self.navigate(
-                        middleware_result.route,
-                        data = middleware_result.data,
-                        replace = middleware_result.replace,
-                        transition = middleware_result.transition
-                    )
+        
+            # Resolve route data
+            resolved_data = await self._resolve_route_data(route_info, route_def)
+            route_info.data.update(resolved_data)
             
-                # Resolve route data
-                resolved_data = self._resolve_route_data.run_and_wait(route_info, route_def)
-                route_info.data.update(resolved_data)
-                
-                # Update history
-                if clear_history:
-                    self.state.history.clear()
-                    self.state.forward_stack.clear()
-                elif not replace:
-                    self.state.history.append(self.state.current_route)
-                    self.state.forward_stack.clear()
+            # Update history
+            if clear_history:
+                self.state.history.clear()
+                self.state.forward_stack.clear()
+            elif not replace:
+                self.state.history.append(self.state.current_route)
+                self.state.forward_stack.clear()
+        
+            # Create and setup component
+            component_instance = await self._create_component(route_def, route_info)
+            self.logger.debug(f'created Component: {component_instance.__class__.__name__}')
             
-                # Create and setup component
-                component_instance = self._create_component.run_and_wait(route_def, route_info)
-                self.logger.debug(f'created Component: {component_instance.__class__.__name__}')
-                
-                # Apply transition and update UI
-                self._apply_transition_and_update(
-                    component_instance, 
-                    route_info, 
-                    transition or self._get_default_transition(route_def)
-                )
+            # Apply transition and update UI
+            await self._apply_transition_and_update(
+                component_instance, 
+                route_info, 
+                transition or self._get_default_transition(route_def)
+            )
+        
+            # Update state
+            self.state.current_route = route_info
             
-                # Update state
-                self.state.current_route = route_info
-                
-                # Update Flet's native routing
-                if self.state.navigation_mode in [NavigationMode.NATIVE, NavigationMode.HYBRID]:
-                    self.page.route = path
-                    self.page.update()
-                
-                # Run middleware after navigation
-                self._run_after_middleware.run_and_wait(route_info)
-                
-                self.logger.info(f"Navigation successful: {path}")
-                return NavigationResult.SUCCESS
+            # Update Flet's native routing
+            if self.state.navigation_mode in [NavigationMode.NATIVE, NavigationMode.HYBRID]:
+                self.page.route = path
+                self.page.update()
+            
+            # Run middleware after navigation
+            await self._run_after_middleware(route_info)
+            
+            self.logger.info(f"Navigation successful: {path}")
+            return NavigationResult.SUCCESS
             
         except Exception as e:
             self.logger.error(f"Navigation failed: {e}", exc_info=True)
-            self._run_error_middleware(e, route_info)
+            await self._run_error_middleware(e, route_info)
             return NavigationResult.ERROR
     
-    @parallel_task(priority = Priority.HIGH)
-    def navigate_with_intent(self, intent: NavigationIntent) -> NavigationResult:
+    # @parallel_task(priority = Priority.HIGH)
+    async def navigate_with_intent(self, intent: NavigationIntent) -> NavigationResult:
         """Navigate using a navigation intent object."""
 
-        return self.navigate(
+        return await self.navigate(
             intent.route,
             data = intent.data,
             replace = intent.replace,
@@ -290,7 +275,9 @@ class FletXRouter:
         self.state.forward_stack.append(self.state.current_route)
         
         # Use async task for navigation
-        self.navigate(previous_route.path, replace = True)
+        get_event_loop().create_task(
+            self.navigate(previous_route.path, replace = True)
+        )
         return True
     
     def go_forward(self) -> bool:
@@ -304,7 +291,9 @@ class FletXRouter:
         self.state.history.append(self.state.current_route)
         
         # Use async task for navigation
-        asyncio.run(self.navigate(forward_route.path, replace = True))
+        get_event_loop().create_task(
+            self.navigate(forward_route.path, replace = True)
+        )
         return True
     
     def can_go_back(self) -> bool:
@@ -346,8 +335,8 @@ class FletXRouter:
         self.state.navigation_mode = mode
         self._logger.debug(f"Navigation mode set to: {mode}")
     
-    @worker_task(priority = Priority.HIGH)
-    def _check_deactivation_guards(self) -> bool:
+    # @worker_task(priority = Priority.HIGH)
+    async def _check_deactivation_guards(self) -> bool:
         """Check if current route can be deactivated."""
 
         current_route_def = self.config.get_route(self.state.current_route.path)
@@ -366,8 +355,8 @@ class FletXRouter:
         
         return True
     
-    @worker_task(priority = Priority.HIGH)
-    def _check_activation_guards(
+    # @worker_task(priority = Priority.HIGH)
+    async def _check_activation_guards(
         self, 
         route_info: RouteInfo, 
         route_def
@@ -378,7 +367,7 @@ class FletXRouter:
         
         for guard in all_guards:
             if not guard.can_activate(route_info):
-                redirect_path = guard.redirect_to(route_info)
+                redirect_path = await guard.redirect_to(route_info)
                 if redirect_path:
                     self.navigate(redirect_path, replace=True)
                     return NavigationResult.REDIRECTED
@@ -386,8 +375,8 @@ class FletXRouter:
         
         return NavigationResult.SUCCESS
     
-    @worker_task(priority = Priority.HIGH)
-    def _run_before_middleware(
+    # @worker_task(priority = Priority.HIGH)
+    async def _run_before_middleware(
         self, 
         from_route: RouteInfo, 
         to_route: RouteInfo
@@ -402,14 +391,14 @@ class FletXRouter:
             all_middleware.extend(route_def.middleware)
         
         for middleware in all_middleware:
-            result = middleware.before_navigation(from_route, to_route)
+            result = await middleware.before_navigation(from_route, to_route)
             if result:
                 return result
         
         return None
     
-    @worker_task(priority = Priority.HIGH)
-    def _run_after_middleware(self, route_info: RouteInfo):
+    # @worker_task(priority = Priority.HIGH)
+    async def _run_after_middleware(self, route_info: RouteInfo):
         """Run after navigation middleware."""
 
         all_middleware = self._global_middleware
@@ -419,10 +408,10 @@ class FletXRouter:
             all_middleware.extend(route_def.middleware)
         
         for middleware in all_middleware:
-            middleware.after_navigation(route_info)
+            await middleware.after_navigation(route_info)
     
-    @worker_task(priority = Priority.HIGH)
-    def _run_error_middleware(
+    # @worker_task(priority = Priority.HIGH)
+    async def _run_error_middleware(
         self, 
         error: Exception, 
         route_info: RouteInfo
@@ -436,10 +425,10 @@ class FletXRouter:
             all_middleware.extend(route_def.middleware)
         
         for middleware in all_middleware:
-            middleware.on_navigation_error(error, route_info)
+            await middleware.on_navigation_error(error, route_info)
     
-    @worker_task(priority = Priority.HIGH)
-    def _resolve_route_data(
+    # @worker_task(priority = Priority.HIGH)
+    async def _resolve_route_data(
         self, 
         route_info: RouteInfo, 
         route_def
@@ -451,7 +440,7 @@ class FletXRouter:
         for key, resolver in route_def.resolve.items():
             try:
                 if asyncio.iscoroutinefunction(resolver):
-                    resolved_data[key] = resolver(route_info)
+                    resolved_data[key] = await resolver(route_info)
                 else:
                     resolved_data[key] = resolver(route_info)
             except Exception as e:
@@ -459,8 +448,8 @@ class FletXRouter:
         
         return resolved_data
     
-    @worker_task(priority = Priority.HIGH)
-    def _create_component(
+    # @worker_task(priority = Priority.HIGH)
+    async def _create_component(
         self, 
         route_def, 
         route_info: RouteInfo
@@ -482,13 +471,13 @@ class FletXRouter:
         
         elif callable(component_class):
             # Callable component
-            return component_class(route_info)
+            return await component_class(route_info)
         
         else:
             raise NavigationError(f"Invalid component type: {type(component_class)}")
     
-    @worker_task(priority = Priority.HIGH)
-    def _apply_transition_and_update(
+    # @worker_task(priority = Priority.CRITICAL)
+    async def _apply_transition_and_update(
         self, 
         component: FletXPage, 
         route_info: RouteInfo, 
@@ -497,14 +486,17 @@ class FletXRouter:
         """Apply transition and update the UI."""
 
         content = component
+        # print('Sortie............................')
 
         if hasattr(component, '_build_page'):
             content._build_page()
-            # component.__page = self.page
-            # component.update()
         
         # Handle different navigation modes
         if self.state.navigation_mode == NavigationMode.VIEWS:
+            self.logger.debug(
+                f"router navigation mode is {self.state.navigation_mode}."
+                "FletX will use Flet Views navigation."
+            )
 
             # Use Flet Views
             view = ft.View(
@@ -515,28 +507,36 @@ class FletXRouter:
             self.state.active_views.append(view)
 
         else:
+
+            self.logger.debug(
+                f"router navigation mode is {self.state.navigation_mode}. "
+                "FletX will apply a direct page update."
+            )
+
+            # Get current controls for transition
+            current_controls = self.page.controls.copy() if self.page.controls else None
+
             # Direct page update
             if transition and transition.type != TransitionType.NONE:
-                content = asyncio.run(
-                    transition.apply(
-                        self.page, 
-                        [content] if not isinstance(content, list) else content
-                    )
+                content = await transition.apply(
+                    self.page, 
+                    [content] if not isinstance(content, list) else content,
+                    current_controls
                 )
-            
+
             self.page.clean()
             if isinstance(content, list):
                 self.page.add(*content)
             else:
                 self.page.add(content)
-        
+
         self.page.update()
         
         # Call lifecycle methods
         if hasattr(component, 'did_mount'):
             try:
                 if asyncio.iscoroutinefunction(component.did_mount):
-                    component.did_mount()
+                    await component.did_mount()
                 else:
                     component.did_mount()
             except Exception as e:

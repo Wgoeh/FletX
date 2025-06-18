@@ -13,7 +13,7 @@ class DashboardHomePage(FletXPage):
         self.controller = FletX.find(DashboardController) or DashboardController()
         super().__init__()
 
-    def _safe_refresh(self, e):
+    def _safe_refresh(self):
         """safe refresh"""
         if not hasattr(self, '_refreshing'):
             self._refreshing = True
@@ -22,11 +22,12 @@ class DashboardHomePage(FletXPage):
     
     def on_logout(self, e):
         self.controller.logout()
-        FletXRouter.to("/login", replace=True)
+        go_back()
     
-    def did_mount(self):
+    def on_init(self):
         # Charge les données quand la page est montée
         self.controller.load_data()
+        self.add_keyboard_shortcut("ctrl+r", lambda: print('ctrl+r'), "Refresh page")
         
     def build(self):
         # Initialisation sécurisée
@@ -258,5 +259,4 @@ class DashboardHomePage(FletXPage):
             ) 
         
         return ProgressRing()  # Fallback UI
-    
     
