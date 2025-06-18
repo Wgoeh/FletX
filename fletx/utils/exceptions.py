@@ -155,3 +155,33 @@ class ProjectError(FletXCLIError):
     This includes project not found, invalid project structure, etc.
     """
     pass
+
+
+####
+##      NETWORK ERROE CLASS
+#####
+class NetworkError(FletXError):
+    """
+    Exception raised when there's a network error with http operations.
+    """
+    pass
+
+
+####
+##      RATELIMOT ERROR CLASS
+#####
+class RateLimitError(FletXError):
+    """
+    Exception raised when there's a rate limit error with http operations.
+    """
+    pass
+
+
+####
+##      API ERROR CLASS
+#####
+class APIError(FletXError):
+    """
+    Exception raised when there's an API error with http operations.
+    """
+    pass
