@@ -17,7 +17,9 @@ from fletx.core.routing.models import (
     NavigationIntent, NavigationMode, 
     NavigationResult, IRouteResolver
 )
-# from fletx.core.background import run_background
+from fletx.utils import (
+    get_event_loop, run_async, get_logger
+)
 
 
 # Convenience functions for global router access
@@ -26,10 +28,25 @@ def get_router() -> FletXRouter:
     """Get the global router instance."""
     return FletXRouter.get_instance()
 
-def navigate(route: str, **kwargs) -> NavigationResult:
+async def navigate_to(route: str, **kwargs) -> NavigationResult:
     """Navigate using the global router."""
+
     router = get_router()
-    return router.navigate(route, **kwargs)
+    try:
+        # Run the navigation task and wait for completion
+        result = await router.navigate(route, **kwargs)
+        return result
+    
+    except asyncio.CancelledError:
+        get_logger('FletX.Navigation').warning("Navigation was cancelled")
+        return NavigationResult.CANCELLED
+    
+def navigate(route: str, **kwargs) -> NavigationResult:
+    """Synchronous wrapper for navigation that schedules the task properly."""
+
+    return run_async(
+        lambda: navigate_to(route, **kwargs)
+    )
 
 def go_back() -> bool:
     """Go back using the global router."""

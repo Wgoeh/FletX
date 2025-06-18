@@ -14,7 +14,7 @@ routes = [
         'component': LoginPage,
         'meta':{
             'transition': RouteTransition(
-                transition_type = TransitionType.ZOOM_IN,
+                transition_type = TransitionType.FADE,
                 duration = 350
             )
         }

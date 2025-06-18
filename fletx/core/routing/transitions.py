@@ -9,13 +9,8 @@ import asyncio
 import enum
 import flet as ft
 from typing import List, Optional, Dict, Any, Callable
-from functools import partial
 
-from fletx.core.concurency.worker import (
-    worker_task, parallel_task, Priority, 
-    WorkerPool, WorkerPoolConfig
-)
-from fletx.utils import get_logger
+from fletx.utils import get_logger, ui_friendly_sleep
 
 
 ####
@@ -118,16 +113,18 @@ class RouteTransition:
     
     def _get_animation_curve(self) -> str:
         """Convert EasingFunction to Flet animation curve."""
+
         return self.easing.value
     
     def _create_animation(self, duration: Optional[int] = None) -> ft.Animation:
         """Create Flet animation object with proper configuration."""
+
         return ft.Animation(
-            duration=duration or self.duration,
-            curve=self._get_animation_curve()
+            duration = duration or self.duration,
+            curve = self._get_animation_curve()
         )
     
-    @worker_task(priority=Priority.HIGH)
+    # @worker_task(priority=Priority.CRITICAL)
     async def apply(
         self, 
         page: ft.Page, 
@@ -148,6 +145,7 @@ class RouteTransition:
             List of controls after transition
         """
         try:
+            print('Entree............................')
             if self.type == TransitionType.NONE:
                 return new_controls
             
@@ -222,6 +220,7 @@ class RouteTransition:
         
         return reverse_map.get(self.type, self.type)
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_fade(
         self, 
         page: ft.Page, 
@@ -229,6 +228,9 @@ class RouteTransition:
         old_controls: List[ft.Control] = None
     ) -> List[ft.Control]:
         """Apply fade transition using Flet's animate_opacity."""
+
+        # Create animation complete event
+        animation_complete = asyncio.Event()
 
         # Create container for new controls with fade animation
         new_container = ft.Container(
@@ -254,27 +256,31 @@ class RouteTransition:
             page.update()
             
             # Start fade out of old content
-            await asyncio.sleep(0.01)
+            # await asyncio.sleep(0.01)
             old_container.opacity = 0
             page.update()
             
             # Wait for half duration, then fade in new content
-            await asyncio.sleep((self.duration // 2) / 1000)
+            await ui_friendly_sleep((self.duration // 2) / 1000, page)
+            # await asyncio.sleep((self.duration // 2) / 1000)
             new_container.opacity = 1
             page.update()
             
             # Wait for animation to complete
-            await asyncio.sleep((self.duration // 2) / 1000)
+            # await asyncio.sleep((self.duration // 2) / 1000)
+            await ui_friendly_sleep((self.duration // 2) / 1000, page)
         else:
             # Just fade in new content
             page.clean()
             page.add(new_container)
             page.update()
             
-            await asyncio.sleep(0.01)
+            # await asyncio.sleep(0.01)
             new_container.opacity = 1
             page.update()
-            await asyncio.sleep(self.duration / 1000)
+            # await asyncio.sleep(self.duration / 1000)
+
+        await animation_complete.wait()
         
         # Replace with final controls
         page.clean()
@@ -283,6 +289,7 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_slide(
         self, 
         page: ft.Page, 
@@ -349,6 +356,7 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_zoom(
         self, 
         page: ft.Page, 
@@ -358,6 +366,7 @@ class RouteTransition:
     ) -> List[ft.Control]:
         """Apply zoom transition using Flet's animate_scale."""
 
+        print('zooming............................')
         initial_scale = 0.0 if zoom_type == TransitionType.ZOOM_IN else 1.5
         
         # Create animated container with scale
@@ -393,11 +402,13 @@ class RouteTransition:
             page.update()
             
             # Start zoom animation
-            await asyncio.sleep(0.01)
+            # await asyncio.sleep(0.01)
             new_container.scale = ft.Scale(1.0)
             page.update()
+            print('annn............................')
         
         # Wait for animation
+        print('final new control............................')
         await asyncio.sleep(self.duration / 1000)
         
         # Replace with final controls
@@ -407,6 +418,7 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_scale(
         self, 
         page: ft.Page, 
@@ -415,8 +427,14 @@ class RouteTransition:
     ) -> List[ft.Control]:
         """Apply scale transition (similar to zoom but with different behavior)."""
         
-        return await self._apply_zoom(page, new_controls, old_controls, TransitionType.ZOOM_IN)
+        return await self._apply_zoom(
+            page, 
+            new_controls, 
+            old_controls, 
+            TransitionType.ZOOM_IN
+        )
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_rotate(
         self, 
         page: ft.Page, 
@@ -479,6 +497,7 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_flip(
         self, 
         page: ft.Page, 
@@ -538,6 +557,7 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_push(
         self, 
         page: ft.Page, 
@@ -563,6 +583,7 @@ class RouteTransition:
         }
         return push_to_slide.get(push_type, TransitionType.SLIDE_LEFT)
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def _apply_custom(
         self, 
         page: ft.Page, 
@@ -582,10 +603,13 @@ class RouteTransition:
     
     def set_animation_end_callback(self, callback: Callable):
         """Set callback to be called when animation ends."""
+
         self._animation_end_callback = callback
     
+    # @worker_task(priority=Priority.CRITICAL)
     async def wait_for_completion(self):
         """Wait for the current animation to complete."""
+
         if self._current_animation:
             await asyncio.sleep(self.duration / 1000)
             self._animation_complete = True

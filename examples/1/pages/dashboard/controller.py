@@ -2,38 +2,38 @@ from fletx.core import (
     FletXController,RxStr, RxList
 )
 from fletx.core.concurency import Priority
-from fletx.decorators import worker_task
+from fletx.decorators import reactive_debounce
+from fletx.utils import run_async
+
 from models.user import User
 
 class DashboardController(FletXController):
     def __init__(self):
-        super().__init__()
         self.username = RxStr("Invité")
         self.todos = RxList([])
         self._is_initialized = False
         
+        super().__init__()
         # Effet auto-nettoyant
         self.add_effect(
             lambda: print("DashboardController prêt"),
             []
         )
-    
 
     def welcome_message(self) -> str:
         return f"Bienvenue, {self.username.value}"
     
-    def initialize(self):
-        """Méthode séparée pour l'initialisation"""
+    def on_ready(self):
         if not self._is_initialized:
-            self.load_data()
+            # self.load_data()
             self._is_initialized = True
-    
+            
     def load_data(self):
         # Simulation chargement async
-        import asyncio
-        @worker_task(priority = Priority.CRITICAL)
+        # import asyncio
+        # @worker_task(priority = Priority.CRITICAL)
+        @reactive_debounce(2)
         def load():
-            asyncio.sleep(1)
             self.username.value = "Admin"
             self.todos.value = [
                 {
@@ -78,7 +78,7 @@ class DashboardController(FletXController):
                 }
             ]
         
-        load.run_and_wait()
+        load()
     
     def logout(self):
         from fletx import FletX

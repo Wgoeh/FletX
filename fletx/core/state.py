@@ -13,6 +13,8 @@ from abc import ABC, abstractmethod
 from fletx.utils import get_logger
 
 T = TypeVar('T')
+K = TypeVar("K")
+V = TypeVar("V")
 
 
 ####
@@ -374,7 +376,7 @@ class RxList(Reactive[List[T]]):
 ####
 ##      REACTIVE DICT CLASS
 #####
-class RxDict(Reactive[Dict[str, T]]):
+class RxDict(Generic[T],Reactive[Dict[str, T]]):
     """
     A dictionary that can be observed and updated reactively, 
     triggering automatic updates when it changes, whether by adding, 
