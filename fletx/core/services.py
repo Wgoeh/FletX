@@ -6,6 +6,7 @@ from datetime import datetime
 from fletx.core.state import (
     Reactive
 )
+from fletx.core.http import HTTPClient
 from fletx.utils import get_logger
 
 
@@ -35,7 +36,7 @@ class FletXService(ABC):
         self, 
         name: Optional[str] = None,
         auto_start: bool = True,
-        http_client: Optional[Any] = None,
+        http_client: Optional[HTTPClient] = None,
     ):
         """
         Initializes the FletX service
@@ -47,9 +48,9 @@ class FletXService(ABC):
             logger: Custom logger
         """
 
-        self._name = name or self.__class__.__name__
+        self._name : str = name or self.__class__.__name__
         self._state: Reactive[ServiceState] = Reactive(ServiceState.IDLE)
-        self._http_client = http_client
+        self._http_client: Optional[HTTPClient] = http_client
         self._logger = get_logger('FletX')
         self._error: Optional[Exception] = None
         self._disposed = False
@@ -59,13 +60,15 @@ class FletXService(ABC):
         #     'ready': []
         # }
         
-        # Données du service
+        # Service data
         self._data: Dict[str, Any] = {}
         
-        # Métadonnées
-        self._created_at = datetime.now()
+        # Metadata
+        self._created_at: datetime = datetime.now()
         self._last_updated: Optional[datetime] = None
 
+        # Setup state change listeners
+        self.setup_state_listeners()
         
         if auto_start:
             self.start()
@@ -107,7 +110,7 @@ class FletXService(ABC):
         return self._error
     
     @property
-    def http_client(self) -> Optional[Any]:
+    def http_client(self) -> HTTPClient:
         """Service http client instance"""
 
         return self._http_client
