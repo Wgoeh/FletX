@@ -163,9 +163,15 @@ class FletXPage(ft.Container, ABC):
         pass
     
     # Lifecycle methods
-    def will_mount(self):
-        """Called before the page is mounted"""
+    def before_on_init(self):
+        """Calls the on_init() hook"""
+
         self.logger.debug(f"Page {self.__class__.__name__} will mount")
+        self._state = PageState.ACTIVE
+
+        # Call On init hook
+        self.on_init()
+        self.logger.debug(f"Page {self.__class__.__name__}.on_init() hook called.")
     
     def did_mount(self):
         """Called when the page is mounted"""
@@ -176,17 +182,16 @@ class FletXPage(ft.Container, ABC):
         self._effects.runEffects()
         self.logger.debug(f"Page {self.__class__.__name__} did mount")
         
-        # Call on init hooks
-        self.on_init()
+        # On Init
+        self.before_on_init()
     
     def on_init(self):
-        """Called when the page is about to appear"""
-        self._state = PageState.ACTIVE
-        self.logger.debug(f"Page {self.__class__.__name__} will appear")
+        """Hook called when the page is about to appear"""
+        pass
     
     def on_destroy(self):
-        """Called when the page will unmount"""
-        self.logger.debug(f"Page {self.__class__.__name__} ")
+        """Hook called when the page will unmount"""
+        pass
     
     def will_unmount(self):
         """Called when the page is about to be unmounted"""
@@ -211,6 +216,10 @@ class FletXPage(ft.Container, ABC):
         self._cleanup_subscriptions()
 
         self.logger.debug(f"Page {self.__class__.__name__} disposed")
+
+        # Call on Destroy hook
+        self.logger.debug(f"Page {self.__class__.__name__}.on_destroy() called")
+        self.on_destroy()
 
     # Controller management
     def get_controller(

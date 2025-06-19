@@ -12,6 +12,7 @@ from fletx.core.types import (
 )
 from fletx.core.router import FletXRouter
 from fletx.core.widget import FletXWidget
+from fletx.core.services import FletXService
 
 __all__ = [
     'FletXController',
@@ -20,6 +21,7 @@ __all__ = [
     'FletXPage',
     'RouteConfig',      # Deprecated
     'FletXRouter',
+    'FletXService',
     'ReactiveDependencyTracker',
     'Observer',
     'Reactive',

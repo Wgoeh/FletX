@@ -1,5 +1,5 @@
 """
-{{ name }} Controller.
+{{ name | pascal_case }} Controller.
 
 This controller class is generated from a template.
 
@@ -15,8 +15,8 @@ from fletx.core import (
     FletXController, RxInt
 )
 
-class {{ name }}Controller(FletXController):
-    """{{ name }} Controller"""
+class {{ name | pascal_case }}Controller(FletXController):
+    """{{ name | pascal_case }} Controller"""
     
     # 🎯 Define your reactive state here
     count = RxInt(0)  # This value can be bound to a component
