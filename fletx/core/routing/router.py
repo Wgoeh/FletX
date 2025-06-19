@@ -27,7 +27,7 @@ from fletx.core.concurency.worker import (
     worker_task, parallel_task, Priority, 
     WorkerPool, WorkerPoolConfig
 )
-from fletx.utils import get_logger, get_event_loop
+from fletx.utils import get_logger, get_event_loop, run_async
 
 
 ####
@@ -275,8 +275,8 @@ class FletXRouter:
         self.state.forward_stack.append(self.state.current_route)
         
         # Use async task for navigation
-        get_event_loop().create_task(
-            self.navigate(previous_route.path, replace = True)
+        run_async(
+            lambda: self.navigate(previous_route.path, replace = True)
         )
         return True
     
@@ -291,8 +291,8 @@ class FletXRouter:
         self.state.history.append(self.state.current_route)
         
         # Use async task for navigation
-        get_event_loop().create_task(
-            self.navigate(forward_route.path, replace = True)
+        run_async(
+            lambda: self.navigate(forward_route.path, replace = True)
         )
         return True
     

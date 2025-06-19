@@ -413,6 +413,7 @@ routes = [
 - [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
 - [x] Fix Route Transition Issues 
 - [x] Add Http Wrapper (using `httpx` or `aiohttp`)
+- [x] Add A FletX Application Service Base class.
 
 ### Todo
 
