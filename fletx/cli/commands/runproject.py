@@ -318,7 +318,7 @@ class RunCommand(BaseCommand):
         try:
             content = target_path.read_text(encoding="utf-8")
             # Simple heuristic: check if file uses flet.app or similar patterns
-            patterns = ["flet.app", "ft.app", "flet_fastapi", "flet_django"]
+            patterns = ["flet.app", "ft.app", "flet_fastapi", "flet_django", "FletXApp"]
 
             return any(pattern in content for pattern in patterns)
         
