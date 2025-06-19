@@ -26,20 +26,25 @@ logger = logging.getLogger("fletx.http")
 
 
 ####
-##      RESPONSE CLASSES
+##      FILE INFO
 #####
 @dataclass
 class FileInfo:
     """Information about an uploaded/downloaded file"""
+
     filename: str
     size: int
     content_type: str
     field_name: Optional[str] = None
 
 
+####
+##      HTTP RESPONSE
+#####
 @dataclass
 class HTTPResponse:
     """Structured HTTP response container"""
+
     status: int
     headers: Dict[str, str]
     data: Union[Dict[str, Any], str, bytes]
@@ -51,33 +56,46 @@ class HTTPResponse:
     @property
     def ok(self) -> bool:
         """Check if response is successful (2xx status)"""
+
         return 200 <= self.status < 300
     
     @property
     def is_json(self) -> bool:
         """Check if response contains JSON data"""
+
         return isinstance(self.data, (dict, list))
     
     def json(self) -> Union[Dict[str, Any], List[Any]]:
         """Get JSON data from response"""
+
         if not self.is_json:
             raise ValueError("Response does not contain JSON data")
         return self.data
     
     def text(self) -> str:
         """Get text data from response"""
+
+        # Bytes data
         if isinstance(self.data, bytes):
             return self.data.decode('utf-8')
+        
+        # Str 
         elif isinstance(self.data, str):
             return self.data
+        
+        # Json data
         elif isinstance(self.data, dict) and 'raw_response' in self.data:
             return self.data['raw_response']
         return str(self.data)
 
 
+####
+##      UPLOAD PROGRESS
+#####
 @dataclass
 class UploadProgress:
     """Progress information for file uploads"""
+
     uploaded: int
     total: int
     percentage: float
@@ -85,9 +103,13 @@ class UploadProgress:
     filename: str
 
 
+####
+##      DOWNLOAD PROGRESS
+#####
 @dataclass
 class DownloadProgress:
     """Progress information for file downloads"""
+
     downloaded: int
     total: int
     percentage: float
@@ -101,9 +123,15 @@ class DownloadProgress:
 class FormData(aiohttp.FormData):
     """Enhanced FormData with file support"""
     
-    def add_file(self, field_name: str, file_path: Union[str, Path], 
-                 filename: Optional[str] = None, content_type: Optional[str] = None):
+    def add_file(
+        self, 
+        field_name: str, 
+        file_path: Union[str, Path], 
+        filename: Optional[str] = None, 
+        content_type: Optional[str] = None
+    ):
         """Add a file to the form data"""
+
         file_path = Path(file_path)
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
@@ -112,7 +140,12 @@ class FormData(aiohttp.FormData):
         with open(file_path, 'rb') as f:
             content = f.read()
         
-        self.add_field(field_name, content, filename=filename, content_type=content_type)
+        self.add_field(
+            field_name, 
+            content, 
+            filename = filename, 
+            content_type = content_type
+        )
 
 
 ####
@@ -121,19 +154,35 @@ class FormData(aiohttp.FormData):
 class Middleware:
     """Base middleware class"""
     
-    async def before_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+    async def before_request(
+        self, 
+        method: str, 
+        url: str, **kwargs
+    ) -> Dict[str, Any]:
         """Called before each request"""
+
         return kwargs
     
-    async def after_response(self, response: HTTPResponse) -> HTTPResponse:
+    async def after_response(
+        self, 
+        response: HTTPResponse
+    ) -> HTTPResponse:
         """Called after each response"""
+
         return response
     
-    async def on_error(self, error: Exception) -> Optional[Exception]:
+    async def on_error(
+        self, 
+        error: Exception
+    ) -> Optional[Exception]:
         """Called when an error occurs. Return None to suppress the error."""
+
         return error
 
 
+####
+##      AUTHENTICATION MIDDLEWARE
+#####
 class AuthMiddleware(Middleware):
     """Authentication middleware"""
     
@@ -141,25 +190,47 @@ class AuthMiddleware(Middleware):
         self.token = token
         self.auth_type = auth_type
     
-    async def before_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+    async def before_request(
+        self, 
+        method: str, 
+        url: str, **kwargs
+    ) -> Dict[str, Any]:
+        """Authentication middleware."""
+
         headers = kwargs.get('headers', {})
         headers['Authorization'] = f"{self.auth_type} {self.token}"
         kwargs['headers'] = headers
+
         return kwargs
 
 
+####
+##      LOGGING MIDDLEWARE
+#####
 class LoggingMiddleware(Middleware):
     """Request/Response logging middleware"""
     
     def __init__(self, log_level: int = logging.INFO):
         self.log_level = log_level
     
-    async def before_request(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+    async def before_request(
+        self, 
+        method: str, 
+        url: str, **kwargs
+    ) -> Dict[str, Any]:
+        
         logger.log(self.log_level, f"[REQUEST] {method} {url}")
         return kwargs
     
-    async def after_response(self, response: HTTPResponse) -> HTTPResponse:
-        logger.log(self.log_level, f"[RESPONSE] {response.status} {response.url} ({response.elapsed:.2f}s)")
+    async def after_response(
+        self, 
+        response: HTTPResponse
+    ) -> HTTPResponse:
+        
+        logger.log(
+            self.log_level, 
+            f"[RESPONSE] {response.status} {response.url} ({response.elapsed:.2f}s)"
+        )
         return response
 
 
@@ -203,6 +274,7 @@ class HTTPClient:
             cookies: Default cookies
             sync_mode: Use synchronous mode by default
         """
+
         self.base_url = base_url.rstrip('/') if base_url else ""
         self.default_headers = default_headers or {
             "Accept": "application/json",
@@ -243,64 +315,81 @@ class HTTPClient:
 
     def add_middleware(self, middleware: Middleware) -> 'HTTPClient':
         """Add middleware to the client"""
+
         self.middlewares.append(middleware)
         return self
 
     def set_auth(self, token: str, auth_type: str = "Bearer") -> 'HTTPClient':
         """Set authentication token"""
+
         self.add_middleware(AuthMiddleware(token, auth_type))
         return self
 
     def set_rate_limit(self, requests_per_second: float) -> 'HTTPClient':
         """Set rate limiting"""
+
         self.rate_limit_per_second = requests_per_second
         return self
 
-    def set_upload_progress_callback(self, callback: Callable[[UploadProgress], None]) -> 'HTTPClient':
+    def set_upload_progress_callback(
+        self, 
+        callback: Callable[[UploadProgress], None]
+    ) -> 'HTTPClient':
         """Set upload progress callback"""
+
         self.upload_progress_callback = callback
         return self
 
-    def set_download_progress_callback(self, callback: Callable[[DownloadProgress], None]) -> 'HTTPClient':
+    def set_download_progress_callback(
+        self, 
+        callback: Callable[[DownloadProgress], None]
+    ) -> 'HTTPClient':
         """Set download progress callback"""
+
         self.download_progress_callback = callback
         return self
 
     async def __aenter__(self) -> 'HTTPClient':
+
         await self.start_session()
         return self
 
     async def __aexit__(self, *exc) -> None:
+
         await self.close_session()
 
     def __enter__(self) -> 'HTTPClient':
+
         self.start_sync_session()
         return self
 
     def __exit__(self, *exc) -> None:
+
         self.close_sync_session()
 
     async def start_session(self) -> None:
         """Initialize the async client session"""
+
         if self._session is None or self._session.closed:
             if self.connector is None:
                 self.connector = aiohttp.TCPConnector(
-                    limit=self.pool_size,
-                    force_close=False,
-                    enable_cleanup_closed=True,
-                    verify_ssl=self.verify_ssl
+                    limit = self.pool_size,
+                    force_close = False,
+                    enable_cleanup_closed = True,
+                    verify_ssl = self.verify_ssl
                 )
             
             timeout = ClientTimeout(total=self.timeout)
             self._session = ClientSession(
-                connector=self.connector,
-                timeout=timeout,
-                headers=self.default_headers,
-                cookies=self.default_cookies
+                connector = self.connector,
+                timeout = timeout,
+                headers = self.default_headers,
+                cookies = self.default_cookies
             )
 
     def start_sync_session(self) -> None:
         """Initialize the sync client session"""
+
         if self._sync_session is None:
             self._sync_session = requests.Session()
             self._sync_session.headers.update(self.default_headers)
@@ -308,9 +397,9 @@ class HTTPClient:
             
             # Configure retries for sync session
             retry_strategy = Retry(
-                total=self.max_retries,
-                backoff_factor=self.retry_delay,
-                status_forcelist=[429, 500, 502, 503, 504]
+                total = self.max_retries,
+                backoff_factor = self.retry_delay,
+                status_forcelist = [429, 500, 502, 503, 504]
             )
             adapter = HTTPAdapter(max_retries=retry_strategy, pool_maxsize=self.pool_size)
             self._sync_session.mount("http://", adapter)
@@ -318,30 +407,45 @@ class HTTPClient:
 
     async def close_session(self) -> None:
         """Close the async client session"""
+
         if self._session and not self._session.closed:
             await self._session.close()
             self._session = None
 
     def close_sync_session(self) -> None:
         """Close the sync client session"""
+
         if self._sync_session:
             self._sync_session.close()
             self._sync_session = None
 
-    async def _apply_middlewares_before(self, method: str, url: str, **kwargs) -> Dict[str, Any]:
+    async def _apply_middlewares_before(
+        self, 
+        method: str, 
+        url: str, 
+        **kwargs
+    ) -> Dict[str, Any]:
         """Apply middlewares before request"""
+
         for middleware in self.middlewares:
             kwargs = await middleware.before_request(method, url, **kwargs)
         return kwargs
 
-    async def _apply_middlewares_after(self, response: HTTPResponse) -> HTTPResponse:
+    async def _apply_middlewares_after(
+        self, 
+        response: HTTPResponse
+    ) -> HTTPResponse:
         """Apply middlewares after response"""
+
         for middleware in self.middlewares:
             response = await middleware.after_response(response)
         return response
 
-    async def _apply_middlewares_error(self, error: Exception) -> Optional[Exception]:
+    async def _apply_middlewares_error(
+        self, error: Exception
+    ) -> Optional[Exception]:
         """Apply middlewares on error"""
+
         for middleware in self.middlewares:
             error = await middleware.on_error(error)
             if error is None:
@@ -350,6 +454,7 @@ class HTTPClient:
 
     async def _rate_limit_check(self) -> None:
         """Check and enforce rate limiting"""
+
         if self.rate_limit_per_second is None:
             return
         
@@ -365,6 +470,7 @@ class HTTPClient:
 
     def _sync_rate_limit_check(self) -> None:
         """Synchronous rate limiting check"""
+
         if self.rate_limit_per_second is None:
             return
         
@@ -381,15 +487,22 @@ class HTTPClient:
 
     def _build_url(self, endpoint: str) -> str:
         """Build full URL from endpoint"""
+
         if endpoint.startswith(('http://', 'https://')):
             return endpoint
+        
         if self.base_url:
             return f"{self.base_url}/{endpoint.lstrip('/')}"
         return endpoint
 
-    async def _process_files_async(self, files: Dict[str, Any], data: Optional[Dict] = None, 
-                                 json_data: Optional[Dict] = None) -> aiohttp.FormData:
+    async def _process_files_async(
+        self, 
+        files: Dict[str, Any], 
+        data: Optional[Dict] = None, 
+        json_data: Optional[Dict] = None
+    ) -> aiohttp.FormData:
         """Process files for async upload"""
+
         form_data = aiohttp.FormData()
         
         # Add regular form fields
@@ -403,62 +516,88 @@ class HTTPClient:
         
         # Add files
         for field_name, file_info in files.items():
+
+            # Provided file is a path
             if isinstance(file_info, (str, Path)):
                 # File path
                 file_path = Path(file_info)
                 if not file_path.exists():
                     raise FileNotFoundError(f"File not found: {file_path}")
                 
+                # Read file content
                 with open(file_path, 'rb') as f:
                     content = f.read()
                 
                 form_data.add_field(
                     field_name,
                     content,
-                    filename=file_path.name
+                    filename = file_path.name
                 )
+            
+            # Content file as tuple
             elif isinstance(file_info, tuple):
+
                 if len(file_info) == 2:
                     filename, content = file_info
-                    form_data.add_field(field_name, content, filename=filename)
+                    form_data.add_field(
+                        field_name, 
+                        content, 
+                        filename = filename
+                    )
+
                 elif len(file_info) == 3:
                     filename, content, content_type = file_info
                     form_data.add_field(
-                        field_name, content, filename=filename, content_type=content_type
+                        field_name, 
+                        content, 
+                        filename = filename, 
+                        content_type = content_type
                     )
+            
+            # File-like object
             elif hasattr(file_info, 'read'):
-                # File-like object
                 content = file_info.read()
                 filename = getattr(file_info, 'name', f'{field_name}_file')
-                form_data.add_field(field_name, content, filename=filename)
+                form_data.add_field(field_name, content, filename = filename)
+
             else:
                 form_data.add_field(field_name, file_info)
         
         return form_data
 
-    def _process_files_sync(self, files: Dict[str, Any]) -> Dict[str, Any]:
+    def _process_files_sync(
+        self, files: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Process files for sync upload"""
+
         processed_files = {}
         
         for field_name, file_info in files.items():
+
+            # File path
             if isinstance(file_info, (str, Path)):
-                # File path
                 file_path = Path(file_info)
                 if not file_path.exists():
                     raise FileNotFoundError(f"File not found: {file_path}")
                 
                 processed_files[field_name] = open(file_path, 'rb')
+            
+            # File Tuple (filename, content, [content_type])
             elif isinstance(file_info, tuple):
                 if len(file_info) == 2:
                     filename, content = file_info
+
                     if isinstance(content, (str, bytes)):
                         processed_files[field_name] = (filename, content)
+
                 elif len(file_info) == 3:
                     filename, content, content_type = file_info
                     processed_files[field_name] = (filename, content, content_type)
+
+            # File-like object
             elif hasattr(file_info, 'read'):
-                # File-like object
                 processed_files[field_name] = file_info
+
             else:
                 processed_files[field_name] = file_info
         
@@ -476,6 +615,7 @@ class HTTPClient:
         **kwargs
     ) -> HTTPResponse:
         """Execute async HTTP request"""
+
         url = self._build_url(endpoint)
         merged_headers = {**self.default_headers, **(headers or {})}
         
@@ -503,25 +643,31 @@ class HTTPClient:
                     await self.start_session()
 
                 async with self._session.request(
-                    method=method,
-                    url=url,
-                    headers=merged_headers,
-                    params=params,
-                    data=data,
-                    json=json_data,
-                    proxy=self.proxy,
-                    allow_redirects=self.follow_redirects,
-                    max_redirects=self.max_redirects,
+                    metho = method,
+                    url = url,
+                    headers = merged_headers,
+                    params = params,
+                    data = data,
+                    json = json_data,
+                    proxy = self.proxy,
+                    allow_redirects = self.follow_redirects,
+                    max_redirects = self.max_redirects,
                     **kwargs
                 ) as response:
                     elapsed = monotonic() - start_time
                     
                     # Process response content
                     content_type = response.headers.get('Content-Type', '')
+
+                    # Json data
                     if 'application/json' in content_type:
                         response_data = await response.json()
+                    
+                    # Text data
                     elif 'text/' in content_type:
                         response_data = await response.text()
+                    
+                    # Byte data (probably a file)
                     else:
                         response_data = await response.read()
 
@@ -530,6 +676,7 @@ class HTTPClient:
 
                     # Handle error responses
                     if response.status == 429:
+
                         error = RateLimitError(
                             message="Rate limit exceeded",
                             status_code=response.status,
@@ -541,12 +688,12 @@ class HTTPClient:
                             raise error
                     
                     http_response = HTTPResponse(
-                        status=response.status,
-                        headers=dict(response.headers),
-                        data=response_data,
-                        elapsed=elapsed,
-                        url=str(response.url),
-                        cookies=dict(response.cookies)
+                        status = response.status,
+                        headers = dict(response.headers),
+                        data = response_data,
+                        elapsed = elapsed,
+                        url = str(response.url),
+                        cookies = dict(response.cookies)
                     )
                     
                     # Apply after middlewares
@@ -572,7 +719,9 @@ class HTTPClient:
                 
                 retry_wait = self.retry_delay * (2 ** attempt)
                 if self.debug:
-                    logger.warning(f"Attempt {attempt + 1} failed. Retrying in {retry_wait:.1f}s. Error: {str(e)}")
+                    logger.warning(
+                        f"Attempt {attempt + 1} failed. Retrying in {retry_wait:.1f}s. Error: {str(e)}"
+                    )
                 await asyncio.sleep(retry_wait)
 
     def _request_sync(
@@ -587,6 +736,7 @@ class HTTPClient:
         **kwargs
     ) -> HTTPResponse:
         """Execute sync HTTP request"""
+
         url = self._build_url(endpoint)
         merged_headers = {**self.default_headers, **(headers or {})}
         
@@ -605,17 +755,17 @@ class HTTPClient:
         
         try:
             response = self._sync_session.request(
-                method=method,
-                url=url,
-                headers=merged_headers,
-                params=params,
-                data=data,
-                json=json_data,
-                files=files,
-                proxies={'http': self.proxy, 'https': self.proxy} if self.proxy else None,
-                verify=self.verify_ssl,
-                allow_redirects=self.follow_redirects,
-                timeout=self.timeout,
+                method = method,
+                url = url,
+                headers = merged_headers,
+                params = params,
+                data = data,
+                json = json_data,
+                files = files,
+                proxies = {'http': self.proxy, 'https': self.proxy} if self.proxy else None,
+                verify = self.verify_ssl,
+                allow_redirects = self.follow_redirects,
+                timeout = self.timeout,
                 **kwargs
             )
             
@@ -623,30 +773,36 @@ class HTTPClient:
             
             # Process response content
             content_type = response.headers.get('Content-Type', '')
+
+            # Json data
             if 'application/json' in content_type:
                 try:
                     response_data = response.json()
                 except json.JSONDecodeError:
                     response_data = {"raw_response": response.text}
+
+            # Text data
             elif 'text/' in content_type:
                 response_data = response.text
+
             else:
                 response_data = response.content
             
             return HTTPResponse(
-                status=response.status_code,
-                headers=dict(response.headers),
-                data=response_data,
-                elapsed=elapsed,
-                url=response.url,
-                cookies=dict(response.cookies)
+                status = response.status_code,
+                headers = dict(response.headers),
+                data = response_data,
+                elapsed = elapsed,
+                url = response.url,
+                cookies = dict(response.cookies)
             )
             
         except requests.RequestException as e:
             raise NetworkError(
-                message=f"Network error: {str(e)}",
-                original_exception=e
+                message = f"Network error: {str(e)}",
+                original_exception = e
             ) from e
+        
         finally:
             # Close file handles if we opened them
             if files:
@@ -674,32 +830,77 @@ class HTTPClient:
             sync: If True, force synchronous execution. If False, force async. 
                   If None, use the client's default mode.
         """
+
         use_sync = sync if sync is not None else self.sync_mode
         
         if use_sync:
-            return self._request_sync(method, endpoint, headers, params, data, json_data, files, **kwargs)
+            return self._request_sync(
+                method, 
+                endpoint, 
+                headers, 
+                params, 
+                data, 
+                json_data, 
+                files, 
+                **kwargs
+            )
+        
         else:
-            return self._request_async(method, endpoint, headers, params, data, json_data, files, **kwargs)
+            return self._request_async(
+                method, 
+                endpoint, 
+                headers, 
+                params, 
+                data, 
+                json_data, 
+                files, 
+                **kwargs
+            )
 
     # Convenience methods
-    def get(self, endpoint: str, **kwargs) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
+    def get(
+        self, 
+        endpoint: str, 
+        **kwargs
+    ) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
         """Perform GET request"""
+
         return self.request("GET", endpoint, **kwargs)
 
-    def post(self, endpoint: str, **kwargs) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
+    def post(
+        self, 
+        endpoint: str, 
+        **kwargs
+    ) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
         """Perform POST request"""
+
         return self.request("POST", endpoint, **kwargs)
 
-    def put(self, endpoint: str, **kwargs) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
+    def put(
+        self, 
+        endpoint: str, 
+        **kwargs
+    ) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
         """Perform PUT request"""
+
         return self.request("PUT", endpoint, **kwargs)
 
-    def delete(self, endpoint: str, **kwargs) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
+    def delete(
+        self, 
+        endpoint: str, 
+        **kwargs
+    ) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
         """Perform DELETE request"""
+
         return self.request("DELETE", endpoint, **kwargs)
 
-    def patch(self, endpoint: str, **kwargs) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
+    def patch(
+        self, 
+        endpoint: str, 
+        **kwargs
+    ) -> Union[HTTPResponse, asyncio.Future[HTTPResponse]]:
         """Perform PATCH request"""
+
         return self.request("PATCH", endpoint, **kwargs)
 
     # File-specific methods
@@ -712,8 +913,15 @@ class HTTPClient:
         **kwargs
     ) -> HTTPResponse:
         """Upload a single file"""
+
         files = {field_name: file_path}
-        return await self._request_async("POST", endpoint, files=files, data=additional_data, **kwargs)
+        return await self._request_async(
+            "POST", 
+            endpoint, 
+            files = files, 
+            data = additional_data, 
+            **kwargs
+        )
 
     async def download_file(
         self,
@@ -722,6 +930,7 @@ class HTTPClient:
         **kwargs
     ) -> HTTPResponse:
         """Download a file"""
+
         response = await self._request_async("GET", endpoint, **kwargs)
         
         if response.ok and isinstance(response.data, bytes):
@@ -741,6 +950,7 @@ class HTTPClient:
         **kwargs
     ) -> HTTPResponse:
         """Stream download a large file with progress tracking"""
+
         url = self._build_url(endpoint)
         file_path = Path(file_path)
         file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -765,15 +975,16 @@ class HTTPClient:
                         percentage = (downloaded / total_size) * 100
                         
                         progress = DownloadProgress(
-                            downloaded=downloaded,
-                            total=total_size,
-                            percentage=percentage,
-                            speed=speed,
-                            filename=file_path.name
+                            downloaded = downloaded,
+                            total = total_size,
+                            percentage = percentage,
+                            speed = speed,
+                            filename = file_path.name
                         )
                         self.download_progress_callback(progress)
             
             elapsed = monotonic() - start_time
+
             return HTTPResponse(
                 status = response.status,
                 headers = dict(response.headers),

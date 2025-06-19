@@ -20,14 +20,10 @@ class DashboardHomePage(FletXPage):
             self.controller.load_data()
             del self._refreshing
     
-    def on_logout(self, e):
-        self.controller.logout()
-        go_back()
-    
     def on_init(self):
         # Charge les données quand la page est montée
         self.controller.load_data()
-        self.add_keyboard_shortcut("ctrl+r", lambda: print('ctrl+r'), "Refresh page")
+        # self.add_keyboard_shortcut("ctrl+r", lambda: print('ctrl+r'), "Refresh page")
         
     def build(self):
         # Initialisation sécurisée
@@ -60,7 +56,7 @@ class DashboardHomePage(FletXPage):
                                         controls = [
                                             # Content with IconButton
                                             IconButton(
-                                                icon = Icons.MENU_OUTLINED,
+                                                icon = Icons.BACKSPACE_OUTLINED,
                                                 bgcolor = Colors.BLACK45,
                                                 icon_color = Colors.WHITE,
                                                 on_click = lambda _: go_back()
