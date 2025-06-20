@@ -94,6 +94,16 @@ my_project/
 └── main.py            # Application entry point
 ```
 
+**To run the project, just navigate to the project folder and run this command**
+
+```bash
+fletx run --web # Will open app in a navigator
+        # --desktop to open app in a desktop window
+        # --android to open app on Android device
+        # --ios to open app on a iOs device
+        # --help for more option
+```
+
 ---
 
 
@@ -141,23 +151,25 @@ class CounterPage(FletXPage):
         )
 
 
-def main(page: ft.Page):
-    page.title = "Counter Example"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.add(CounterPage().build())    # Add the CounterPage to the FletX page
+def main():
 
     # Defining route
     router_config.add_route(
-        **{
-            'path': '/',
-            'component': CounterPage
-        }
+        **{'path': '/', 'component': CounterPage}
     )
-    app = FletXApp()
-    app._main(page)                    # Initialize the FletX application with the page
+    app = FletXApp(
+        title = "My Counter",
+        initial_route = "/",
+        debug = True
+    ).with_window_size(400, 600).with_theme(
+        ft.Theme(color_scheme_seed=ft.Colors.BLUE)
+    )
+    
+    # Run sync
+    app.run()
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    main()
 
 ```
 

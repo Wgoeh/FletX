@@ -142,7 +142,7 @@ class RouterConfig:
         if ':' in path or '*' in path:
             pattern = RoutePattern(path)
             self._route_patterns.append((pattern, route_def))
-        
+
         self.logger.debug(f"Route added: {path} -> {component}")
         return route_def
     
@@ -197,6 +197,9 @@ class RouterConfig:
                 meta = route.meta
             )
             self._routes[full_path] = module_route
+
+            # Add subrouter patterns too
+            self._route_patterns.extend(module_router._config._route_patterns)
     
     def get_route(self, path: str) -> Optional[RouteDefinition]:
         """Get route definition by exact path match."""
@@ -214,6 +217,7 @@ class RouterConfig:
         # Try pattern matching
         for pattern, route_def in self._route_patterns:
             params = pattern.match(path)
+
             if params is not None:
                 return route_def, params
         
