@@ -20,7 +20,7 @@ routes = [
         }
     },
     {
-        'path': '/dashboard',
+        'path': '/dashboard/:id',
         'component': DashboardHomePage,
         'meta':{
             'transition': RouteTransition(

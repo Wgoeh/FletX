@@ -313,7 +313,7 @@ class LoginPage(FletXPage):
         )
     def on_login(self, e):
         print('login....................................................')
-        navigate("/dashboard")
+        navigate("/dashboard/123")
         # Validation basique
         if not self.email_field.value or not self.password_field.value:
             return
@@ -322,6 +322,6 @@ class LoginPage(FletXPage):
         self.controller.login(
             self.email_field.value,
             self.password_field.value,
-            on_success=lambda: navigate("/dashboard"),
+            on_success=lambda: navigate("/dashboard/231"),
             on_failure=lambda: print("Échec de connexion")
         )

@@ -26,6 +26,7 @@ from fletx.utils import (
 
 def get_router() -> FletXRouter:
     """Get the global router instance."""
+    
     return FletXRouter.get_instance()
 
 async def navigate_to(route: str, **kwargs) -> NavigationResult:

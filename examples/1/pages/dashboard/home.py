@@ -1,6 +1,6 @@
 from flet import * 
 from fletx import FletX
-from fletx.core import FletXPage, FletXRouter
+from fletx.core import FletXPage
 from fletx.navigation import navigate, go_back
 
 from .controller import DashboardController
@@ -137,7 +137,7 @@ class DashboardHomePage(FletXPage):
                                             ),
                                             ElevatedButton(
                                                 text = "See all",
-                                                on_click = lambda e: FletXRouter.to("/categories")
+                                                on_click = lambda e: navigate("/categories")
                                             )
                                         ]
                                     )
@@ -219,7 +219,7 @@ class DashboardHomePage(FletXPage):
                                             ),
                                             ElevatedButton(
                                                 text = "See all",
-                                                on_click = lambda e: FletXRouter.to("/tasks")
+                                                on_click = lambda e: navigate("/tasks")
                                             )
                                         ]
                                     )

@@ -23,10 +23,7 @@ from fletx.core.routing.config import (
 from fletx.core.page import FletXPage
 from fletx.core.routing.transitions import RouteTransition, TransitionType
 from fletx.utils.exceptions import RouteNotFoundError, NavigationError
-from fletx.core.concurency.worker import (
-    worker_task, parallel_task, Priority, 
-    WorkerPool, WorkerPoolConfig
-)
+
 from fletx.utils import get_logger, get_event_loop, run_async
 
 
@@ -54,7 +51,7 @@ class FletXRouter:
     def __init__(
         self, 
         page: ft.Page, 
-        config: RouterConfig = None
+        config: Optional[RouterConfig] = None
     ):
         """Initialize the router with a Flet page."""
 
