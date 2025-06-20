@@ -145,7 +145,6 @@ class RouteTransition:
             List of controls after transition
         """
         try:
-            print('Entree............................')
             if self.type == TransitionType.NONE:
                 return new_controls
             

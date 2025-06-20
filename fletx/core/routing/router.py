@@ -342,12 +342,12 @@ class FletXRouter:
         
         # Check route-specific guards
         for guard in current_route_def.guards:
-            if not guard.can_deactivate(self.state.current_route):
+            if not await guard.can_deactivate(self.state.current_route):
                 return False
         
         # Check global guards
         for guard in self._global_guards:
-            if not guard.can_deactivate(self.state.current_route):
+            if not await guard.can_deactivate(self.state.current_route):
                 return False
         
         return True
@@ -363,7 +363,7 @@ class FletXRouter:
         all_guards = route_def.guards + self._global_guards
         
         for guard in all_guards:
-            if not guard.can_activate(route_info):
+            if not await guard.can_activate(route_info):
                 redirect_path = await guard.redirect_to(route_info)
                 if redirect_path:
                     self.navigate(redirect_path, replace=True)

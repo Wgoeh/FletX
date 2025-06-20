@@ -64,7 +64,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletXr==0.1.4.dev0
+pip install FletXr==0.1.4.dev1
 ```
 
 ### Create project
