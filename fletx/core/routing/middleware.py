@@ -18,7 +18,7 @@ class RouteMiddleware:
     Useful for logging, analytics, access control, confirmation dialogs, etc.
     """
 
-    def before_navigation(
+    async def before_navigation(
         self, 
         from_route: RouteInfo, 
         to_route: RouteInfo
@@ -27,11 +27,11 @@ class RouteMiddleware:
         """Execute before navigation. Return NavigationIntent to redirect."""
         return None
     
-    def after_navigation(self, route_info: RouteInfo) -> None:
+    async def after_navigation(self, route_info: RouteInfo) -> None:
         """Execute after successful navigation."""
         pass
     
-    def on_navigation_error(
+    async def on_navigation_error(
         self, 
         error: Exception, 
         route_info: RouteInfo

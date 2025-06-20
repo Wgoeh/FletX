@@ -56,7 +56,7 @@ class DashboardHomePage(FletXPage):
                                         controls = [
                                             # Content with IconButton
                                             IconButton(
-                                                icon = Icons.BACKSPACE_OUTLINED,
+                                                icon = Icons.ARROW_BACK_IOS,
                                                 bgcolor = Colors.BLACK45,
                                                 icon_color = Colors.WHITE,
                                                 on_click = lambda _: go_back()

@@ -23,7 +23,7 @@ class RouteGuard(ABC):
     """
 
     @abstractmethod
-    def can_activate(self, route: RouteInfo) -> bool:
+    async def can_activate(self, route: RouteInfo) -> bool:
         """
         Determines whether the given route is allowed to be activated (navigated to).
 
@@ -36,7 +36,7 @@ class RouteGuard(ABC):
         pass
 
     @abstractmethod
-    def can_deactivate(self, current_route: RouteInfo) -> bool:
+    async def can_deactivate(self, current_route: RouteInfo) -> bool:
         """
         Determines whether the given route is allowed to be deactivated.
         Args:
@@ -48,7 +48,7 @@ class RouteGuard(ABC):
         pass
 
     @abstractmethod
-    def redirect_to(self, route: RouteInfo) -> Optional[str]:
+    async def redirect_to(self, route: RouteInfo) -> Optional[str]:
         """
         Specifies the fallback route to redirect to if `can_activate()` returns False.
 

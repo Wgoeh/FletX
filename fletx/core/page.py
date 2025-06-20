@@ -16,7 +16,7 @@ from fletx.core.di import DI
 from fletx.core.effects import EffectManager
 
 from fletx.core.state import Reactive
-from fletx.utils import get_logger
+from fletx.utils import get_logger, get_page
 import weakref
 from datetime import datetime
 from enum import Enum
@@ -106,6 +106,7 @@ class FletXPage(ft.Container, ABC):
             expand = True,
             padding = padding,
             bgcolor = bgcolor,
+            width = get_page().width,
             **kwargs
         )
     
