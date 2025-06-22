@@ -23,5 +23,4 @@ uv.lock
 **/*nfc.py
 dist/*
 docs/*
-tests/*
 build/*
