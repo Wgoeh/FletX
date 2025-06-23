@@ -88,6 +88,43 @@ pytest tests/
 └── setup.py
 ```
 
+## Roadmap 🗺️
+
+- [x] **Step 1** — **Fondation**
+    > ⚙️ **Goal** : build thechnical bases and essential abstractions. 
+- [x] **Step 2** — **State Management + DI**
+    > 🎯 **Goal** : Enable reactive state management.
+- [x] **Step 3** — **Advanced navigation**
+    > 🧭 **Goal** : Add support for modular and nested routing, middlewares and Guards.
+- [x] **Step 4** — **Utilities & CLI**
+    > 🛠️ **Goal** : Add tools to boost DX (developer experience).
+- [ ] **Step 5** — **UI Components**
+    > 🧱 **Goal** : Add ready to use reactive UI components (enabling extensibility).
+- [ ] **Step 6** — **Write Documentation**
+    > 📚 **Goal** : Write FletX's documentation.
+
+### Currently Working on
+
+- [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
+- [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
+- [x] Improve Actual routing system (enabling devs to create subrouters for modules)
+- [x] FLetXPage enhancement (hooks, events and more)
+- [x] Improve `FletXController` class making it more flexible
+- [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
+- [x] Fix Route Transition Issues 
+- [x] Add Http Wrapper (using `httpx` or `aiohttp`)
+- [x] Add A FletX Application Service Base class.
+
+### Todo
+
+- [ ] Add Services generation template and command to the CLI
+- [ ] Add Ready to use Reactive Widgets or components
+- [ ] Add Screen Management System for Page Widgets 
+- [ ] Write Documentation
+- [ ] Enhanced dev tools
+
+---
+
 ## 🔄 Development Workflow
 
 1. **Create a branch**  

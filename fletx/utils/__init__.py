@@ -65,7 +65,7 @@ def run_async(callback: Callable[[], Awaitable[Any]]) -> Any:
         The result of the coroutine, or a task if within a running loop.
     """
     
-    # If we're inside an existing running loop (e.g., FastAPI)
+    # If we're inside an existing running loop 
     loop = get_event_loop()
 
     if loop.is_running():

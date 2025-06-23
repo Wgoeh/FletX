@@ -14,7 +14,7 @@ routes = [
         'component': LoginPage,
         'meta':{
             'transition': RouteTransition(
-                transition_type = TransitionType.FADE,
+                transition_type = TransitionType.ZOOM_IN,
                 duration = 350
             )
         }
@@ -24,8 +24,8 @@ routes = [
         'component': DashboardHomePage,
         'meta':{
             'transition': RouteTransition(
-                transition_type = TransitionType.SLIDE_LEFT,
-                duration = 350
+                transition_type = TransitionType.SLIDE_DOWN,
+                duration = 500
             )
         }
     },
