@@ -17,9 +17,23 @@ from fletx.core import (
 
 class {{ name | pascal_case }}Controller(FletXController):
     """{{ name | pascal_case }} Controller"""
+
+    def __init__(self):
+        # 🎯 Define your reactive state here
+        count = RxInt(0)  # This value can be bound to a component
+        super().__init__()
+
+    def on_initialized(self):
+        """Hook called when initializing controller"""
+        print("{{ name | pascal_case }}Controller initialized.")
+
+    def on_ready(self):
+        """Hook called when the controller is ready"""
+        print("{{ name | pascal_case }}Controller is READY!!!")
     
-    # 🎯 Define your reactive state here
-    count = RxInt(0)  # This value can be bound to a component
+    def on_disposed(self):
+        """Hook called when disposing controller"""
+        print("{{ name | pascal_case }}Controller is disposing")
 
     # 💡 Example: add methods to update state or handle events
     # def increment(self):

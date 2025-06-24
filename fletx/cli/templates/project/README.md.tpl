@@ -79,54 +79,17 @@ fletx run --host 0.0.0.0 --port 8080
 # Create a new controller
 fletx generate controller UserController
 
-# Create a new view
-fletx generate view UserView
+# Create a new Page (Screen)
+fletx generate page UserView
 
 # Create a new service
 fletx generate service ApiService
 
-# Create a new page
-fletx generate page ProfilePage
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=app
-
-# Run specific test file
-pytest tests/test_controllers.py
-```
-
-### Code Formatting
-
-```bash
-# Format code with black
-black .
-
-# Check code style with flake8
-flake8 app/
-
-# Type checking with mypy
-mypy app/
+# Create a new Widget (Component)
+fletx generate component TaskItem
 ```
 
 ---
-
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Run the test suite
-6. Submit a pull request
-
 
 ## Author
 

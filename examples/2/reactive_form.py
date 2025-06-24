@@ -28,7 +28,7 @@ class ReactiveTextField(TextField):
         rx_disabled: RxBool = RxBool(False),
         **kwargs
     ):
-        # Définir les propriétés réactives
+        # Define reactive properties
         self.rx_value = rx_value
         self.rx_visible = rx_visible
         self.rx_disabled = rx_disabled

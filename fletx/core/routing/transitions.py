@@ -229,7 +229,7 @@ class RouteTransition:
         """Apply fade transition using Flet's animate_opacity."""
 
         # Create animation complete event
-        animation_complete = asyncio.Event()
+        # animation_complete = asyncio.Event()
 
         # Create container for new controls with fade animation
         new_container = ft.Container(
@@ -255,31 +255,31 @@ class RouteTransition:
             page.update()
             
             # Start fade out of old content
-            # await asyncio.sleep(0.01)
+            await asyncio.sleep(0.01)
             old_container.opacity = 0
             page.update()
             
             # Wait for half duration, then fade in new content
-            await ui_friendly_sleep((self.duration // 2) / 1000, page)
-            # await asyncio.sleep((self.duration // 2) / 1000)
+            # await ui_friendly_sleep((self.duration // 2) / 1000, page)
+            await asyncio.sleep((self.duration // 2) / 1000)
             new_container.opacity = 1
             page.update()
             
             # Wait for animation to complete
-            # await asyncio.sleep((self.duration // 2) / 1000)
-            await ui_friendly_sleep((self.duration // 2) / 1000, page)
+            await asyncio.sleep((self.duration // 2) / 1000)
+            # await ui_friendly_sleep((self.duration // 2) / 1000, page)
         else:
             # Just fade in new content
             page.clean()
             page.add(new_container)
             page.update()
             
-            # await asyncio.sleep(0.01)
+            await asyncio.sleep(0.01)
             new_container.opacity = 1
             page.update()
-            # await asyncio.sleep(self.duration / 1000)
+            await asyncio.sleep(self.duration / 1000)
 
-        await animation_complete.wait()
+        # await animation_complete.wait()
         
         # Replace with final controls
         page.clean()
@@ -365,7 +365,6 @@ class RouteTransition:
     ) -> List[ft.Control]:
         """Apply zoom transition using Flet's animate_scale."""
 
-        print('zooming............................')
         initial_scale = 0.0 if zoom_type == TransitionType.ZOOM_IN else 1.5
         
         # Create animated container with scale
@@ -404,10 +403,8 @@ class RouteTransition:
             # await asyncio.sleep(0.01)
             new_container.scale = ft.Scale(1.0)
             page.update()
-            print('annn............................')
         
         # Wait for animation
-        print('final new control............................')
         await asyncio.sleep(self.duration / 1000)
         
         # Replace with final controls

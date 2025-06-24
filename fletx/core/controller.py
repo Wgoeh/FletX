@@ -359,7 +359,7 @@ class FletXController:
         self._error_message.listen(lambda: self._on_error_change())
 
     def _on_state_change(self):
-        """Handler pour les changements d'état"""
+        """Handler for state changes"""
 
         current_state = self._state.value
         self._logger.debug(f"State changes: {current_state}")
