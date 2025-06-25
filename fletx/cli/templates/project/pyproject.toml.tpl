@@ -6,6 +6,6 @@ readme = "README.md"
 authors = [{ name = "{{ author }}", email = "" }]
 requires-python = ">={{ python_version }}"
 dependencies = [
-    "fletxr",
+    "fletxr=={{ fletx_version }}",
     "flet[all]",
 ]

@@ -118,7 +118,10 @@ from fletx.decorators import (
 
 
 class CounterController(FletXController):
-    count = RxInt(0)  # Reactive state
+
+    def __init__(self)
+        count = RxInt(0)  # Reactive state
+        super().__init__()
 
 
 @simple_reactive(
@@ -183,6 +186,8 @@ class SearchController(FletXController):
         self.results = RxList([])
         self.is_loading = RxBool(False)
         self.is_enabled = RxBool(True)
+
+        super().__init__()
         
         # Configure reactives effects
         self._setup_reactive_effects()

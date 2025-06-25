@@ -9,6 +9,7 @@
 [![Downloads](https://static.pepy.tech/badge/FletXr)](https://pepy.tech/project/FletXr)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/1381155066232176670)](https://discord.gg/GRez7BTZVy)
+<!-- [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/AllDotPy/FletX)]() -->
 
 ## Why FletX? ✨
 
@@ -67,7 +68,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletXr==0.1.4.dev0
+pip install FletXr==0.1.4.dev1
 ```
 
 ### Create project
@@ -122,7 +123,10 @@ from fletx.decorators import (
 
 
 class CounterController(FletXController):
-    count = RxInt(0)  # Reactive state
+
+    def __init__(self):
+        count = RxInt(0)  # Reactive state
+        super().__init__()
 
 
 @simple_reactive(
@@ -179,7 +183,7 @@ if __name__ == "__main__":
 
 ### 1. Reactive State Management
 ```python
-class SearchController:
+class SearchController(FletXController):
     """Search controller"""
     
     def __init__(self):
@@ -188,8 +192,11 @@ class SearchController:
         self.is_loading = RxBool(False)
         self.is_enabled = RxBool(True)
         
+        super().__init__()
+
         # Configure reactives effects
         self._setup_reactive_effects()
+
     
     def _setup_reactive_effects(self):
         """Configure reactive effects"""
@@ -354,14 +361,6 @@ routes = [
 ### Middleware and Guards
 ```python
 
-router_config.add_route(
-    path="/profile",
-    component=ProfilePage,
-    guards = [AuthGuard()],
-    middleware=[AnalyticsMiddleware()]
-)
-
-# Or
 routes = [
     {
         'path': '/dashboard',
@@ -400,42 +399,6 @@ routes = [
 
 ---
 
-## Roadmap 🗺️
-
-- [x] **Step 1** — **Fondation**
-    > ⚙️ **Goal** : build thechnical bases and essential abstractions. 
-- [x] **Step 2** — **State Management + DI**
-    > 🎯 **Goal** : Enable reactive state management.
-- [x] **Step 3** — **Advanced navigation**
-    > 🧭 **Goal** : Add support for modular and nested routing, middlewares and Guards.
-- [x] **Step 4** — **Utilities & CLI**
-    > 🛠️ **Goal** : Add tools to boost DX (developer experience).
-- [ ] **Step 5** — **UI Components**
-    > 🧱 **Goal** : Add ready to use reactive UI components (enabling extensibility).
-- [ ] **Step 6** — **Write Documentation**
-    > 📚 **Goal** : Write FletX's documentation.
-
-### Currently Working on
-
-- [x] Add @reactive_control to allow converting flet Controls into a FletX reactive Widgets
-- [x] FletX CLI tool Eg: `fletx new my_project`; `fletx generate module my_project/my_module`
-- [x] Improve Actual routing system (enabling devs to create subrouters for modules)
-- [x] FLetXPage enhancement (hooks, events and more)
-- [x] Improve `FletXController` class making it more flexible
-- [x] Improve worker system (Actually can't correctly share same worker pool between worker tasks).
-- [x] Fix Route Transition Issues 
-- [x] Add Http Wrapper (using `httpx` or `aiohttp`)
-- [x] Add A FletX Application Service Base class.
-
-### Todo
-
-- [ ] Add Services generation template and command to the CLI
-- [ ] Add Ready to use Reactive Widgets or components
-- [ ] Add Screen Management System for Page Widgets 
-- [ ] Write Documentation
-- [ ] Enhanced dev tools
-
----
 
 ## 🤝 Contributing
 

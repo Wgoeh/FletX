@@ -675,6 +675,8 @@ def reactive_form(
                 self._form_errors.pop(field, None)
             else:
                 self._form_errors[field] = errors or f"Invalid {field} value"
+                if auto_validate:
+                    self._call_handler(on_submit_failed, self.get_errors())
             
             # Update form validity if rx_is_valid exists
             if hasattr(self, 'rx_is_valid'):
