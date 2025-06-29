@@ -7,6 +7,10 @@ This guide will walk you through:
 * Installation
 * Creating your first FletX app
 * Directory structure
+<<<<<<< HEAD
+=======
+* CLI usage and commands
+>>>>>>> 506f1ce38a74ef25814048f7ae0b6e4664757bb9
 
 ---
 
