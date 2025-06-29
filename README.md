@@ -3,10 +3,29 @@
 </p>
 
 
-[![PyPI Version](https://img.shields.io/pypi/v/FletXr)](https://pypi.org/project/FletXr/)
+<p align="center">
+    <a href="https://pypi.org/project/FletXr/">
+        <img src="https://img.shields.io/pypi/v/FletXr" alt="PyPI Version" />
+    </a>
+    <a href="https://pepy.tech/project/FletXr">
+        <img src="https://static.pepy.tech/badge/FletXr" alt="Downloads" />
+    </a>
+    <a href="LICENSE">
+        <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
+    </a>
+    <a href="https://discord.gg/GRez7BTZVy">
+        <img src="https://img.shields.io/discord/1381155066232176670" alt="Discord" />
+    </a>
+    <a href="https://github.com/AllDotPy/FletX">
+        <img src="https://img.shields.io/github/commit-activity/m/AllDotPy/FletX" alt="GitHub commit activity" />
+    </a>
+</p>
+
+
+<!-- [![PyPI Version](https://img.shields.io/pypi/v/FletXr)](https://pypi.org/project/FletXr/)
 [![Downloads](https://static.pepy.tech/badge/FletXr)](https://pepy.tech/project/FletXr)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Discord](https://img.shields.io/discord/1381155066232176670)](https://discord.gg/GRez7BTZVy)
+[![Discord](https://img.shields.io/discord/1381155066232176670)](https://discord.gg/GRez7BTZVy) -->
 <!-- [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/AllDotPy/FletX)]() -->
 
 # FletX 🚀  

@@ -120,3 +120,11 @@ fletx generate controller MyController --with-test
 # Run the project
 fletx run --web --debug
 ```
+
+---
+
+## 🧠 Next Steps
+
+* Learn about the [Architecture](architecture.md)
+* Explore [reactive UI binding](ui/reactivity.md)
+* Dive into [dependency injection](guides/dependency-injection.md)
