@@ -220,7 +220,6 @@ class CounterController(FletXController):
 
 ---
 
-
 ## 🧠 Next Steps
 
 * Explore [reactive UI binding](ui/reactivity.md)
