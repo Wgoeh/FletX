@@ -23,7 +23,17 @@ fletx = "fletx.__main__:main"
 "Homepage" = "https://github.com/AllDotPy/FletX"
 
 [project.optional-dependencies]
-dev = ["pytest", "black", "mypy","twine","uv","build"]
+dev = [
+    "pytest", 
+    "black", 
+    "mypy",
+    "twine",
+    "uv",
+    "build",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.14",
+    "mkdocs-static-i18n>=1.3.0",
+]
 
 [tool.setuptools]
 packages = ["fletx"]
