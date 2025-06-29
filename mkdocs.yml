@@ -67,15 +67,31 @@ extra_css:
 nav:
   # # English translations
   # en:
+
+  # HOME
   - Home: index.md
+
+  # GETTING STARTED
   - Getting Started:
       - Installation: getting-started/installation.md
-      - Configuration: getting-started/configuration.md
+      # - FletX CLI: getting-started/fletx-cli.md
+      # - Sample Project: getting-started/configuration.md
+      # - FletX CLI: getting-started/configuration.md
+
+  # GUIDES
   - Guides:
-      - Payments: guides/payments.md
-      - Webhooks: guides/webhooks.md
-      - Error Handling: guides/error-handling.md
+      - Architecture: guides/architecture.md
+      - State Management: guides/state-management.md
+      - Controllers: guides/controllers.md
+      - Pages (views): guides/pages.md
+      - Routing System: guides/routing.md
+      - Dependency Injection: guides/dependency-injection.md
+      - Services: guides/services.md
+
+  # API REFERENCE
   - API Reference: api-reference.md
+
+  # CONTRIBUTIONG
   - Contributing: contributing.md
 
   # French translations
@@ -140,8 +156,8 @@ extra:
 
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/AllDotPy/easyswitch
-      name: EasySwitch on GitHub
+      link: https://github.com/AllDotPy/FletX
+      name: FletX on GitHub
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/easyswitch
-      name: EasySwitch on X
+      name: FletX on X

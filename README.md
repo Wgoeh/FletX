@@ -1,5 +1,5 @@
 <p align = 'center'>
-    <img src='fletx.png?raw=true' height = '100'></img>
+    <img src='fletx_t.png?raw=true' height = '150'></img>
 </p>
 
 # FletX 🚀  
