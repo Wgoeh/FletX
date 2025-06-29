@@ -36,7 +36,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
       </td>
       <td rowspan="2">
         Todo App
-        <img src = "./screeshots/videos/todo.gif" width="300">
+        <img src = "./screeshots/videos/routing.gif" width="400">
       </td>
     </tr>
     <tr >
