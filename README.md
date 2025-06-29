@@ -2,14 +2,15 @@
     <img src='fletx_t.png?raw=true' height = '150'></img>
 </p>
 
-# FletX 🚀  
-**The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
 [![PyPI Version](https://img.shields.io/pypi/v/FletXr)](https://pypi.org/project/FletXr/)
 [![Downloads](https://static.pepy.tech/badge/FletXr)](https://pepy.tech/project/FletXr)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Discord](https://img.shields.io/discord/1381155066232176670)](https://discord.gg/GRez7BTZVy)
 <!-- [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/AllDotPy/FletX)]() -->
+
+# FletX 🚀  
+**The open-source GetX-inspired Python Framework for Building Reactive, Cross-Platform Apps with Flet**
 
 ## Why FletX? ✨
 
@@ -35,7 +36,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
         <img src = "./screeshots/videos/counter.gif" width="400">
       </td>
       <td rowspan="2">
-        Todo App
+        Navigation
         <img src = "./screeshots/videos/routing.gif" width="400">
       </td>
     </tr>
@@ -393,7 +394,7 @@ routes = [
 
 ## Community & Support 💬
 
-- [Documentation](https://fletx.dev/docs) 📚 (not available for now.)
+- [Documentation](https://alldotpy.github.io/FletX/) 📚 (under contructions.)
 - [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
 
