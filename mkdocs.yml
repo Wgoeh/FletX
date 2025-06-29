@@ -69,7 +69,7 @@ nav:
 
   # GETTING STARTED
   - Getting Started:
-      - Installation: getting-started/installation.md
+      - Introduction: getting-started/installation.md
       - FletX CLI: getting-started/fletx-cli.md
       - Architecture: getting-started/architecture.md
       - State Management: getting-started/state-management.md
