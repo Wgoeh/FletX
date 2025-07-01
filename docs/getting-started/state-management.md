@@ -212,7 +212,7 @@ class RegistrationForm(Column):
 Reactive objects can also trigger **non-UI behaviors**:
 
 ```python
-self.ctrl.logged_in.listen(lambda value: self.navigate('/home') if value else None)
+self.ctrl.logged_in.listen(lambda value: navigate('/home') if value else None)
 ```
 
 * Service calls
