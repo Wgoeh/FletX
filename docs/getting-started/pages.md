@@ -135,7 +135,7 @@ class HomePage(FletXPage):
         
         # Register keyboard shortcuts
         self.add_keyboard_shortcut("ctrl+r", self.refresh, "Refresh the page")
-        self.add_keyboard_shortcut("ctrl+h", self.go_home, "Go to home page")
+        self.add_keyboard_shortcut("ctrl+h", lambda: navigate('/home'), "Go to home page")
 
         # Inject HomeController
         self.controller = FletX.put(HomeController(),'home_conroller')
@@ -164,14 +164,14 @@ class HomePage(FletXPage):
         self.router.go("/home")
 
     def show_sample_dialog(self, _=None):
-        self.dialog("This is a sample dialog.")
+        ...
 
     def show_snackbar(self, _=None):
-        self.snackbar("Something went wrong.")
+        ...
 
     def show_loader(self, is_loading):
         if is_loading:
-            self.dialog("Loading, please wait...")
+            ...
 ```
 
 ---
@@ -190,6 +190,6 @@ class HomePage(FletXPage):
 
 ## 🧠 Next Steps
 
-* Explore the [Routing System](pages.md)
+* Explore the [Routing System](routing.md)
 * Learn about the [Architecture](architecture.md)
 * Dive into [dependency injection](guides/dependency-injection.md)
