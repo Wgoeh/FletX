@@ -32,11 +32,11 @@ FletX allows dynamic segments using `:param` and `*param` (wildcard):
 router_config.add_routes([
     {
         "path": "/users/:id",  # :id is dynamic (e.g. /users/42)
-        "component": lambda route: UserDetailPage(route.params["id"])
+        "component": UserDetailPage
     },
     {
         "path": "/products/*category",  # Matches /products/electronics/phones
-        "component": lambda route: ProductsPage(route.params["category"])
+        "component": ProductsPage
     }
 ])
 ```

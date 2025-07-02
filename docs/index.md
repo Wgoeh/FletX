@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
     Learn routing, state, and architecture with hands-on guides.
 
-    [→ Routing Guide](guides/routing.md) | [→ State Management](guides/state.md)
+    [→ Routing Guide](getting-started/routing.md) | [→ State Management](getting-started/state-management.md)
 
 -   :material-github:{ .lg .middle } **Contribute**
 
