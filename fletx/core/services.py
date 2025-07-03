@@ -120,6 +120,16 @@ class FletXService(ABC):
         """Service data (read only)"""
 
         return self._data.copy()
+
+    def set_error(self, error: Exception):
+        """Set the service error"""
+
+        if self._disposed:
+            raise RuntimeError(f"Service {self._name} is disposed")
+        
+        self._error = error
+        self._logger.error(f"Service error: {error}")
+        self._change_state(ServiceState.ERROR)
     
     def set_data(self, key: str, value: Any):
         """Add a key value data to the service's data"""
