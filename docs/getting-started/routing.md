@@ -230,7 +230,7 @@ router_config.add_route(
 Use `navigate()` to switch routes and `go_back()` to return to the previous one.
 
 ```python
-from fletx.routing import navigate, go_back
+from fletx.navigation import navigate, go_back
 
 # Navigate to a static or dynamic page
 navigate("/home")
