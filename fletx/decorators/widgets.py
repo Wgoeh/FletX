@@ -798,6 +798,7 @@ def reactive_list(
     
     def decorator(ListClass):
         original_init = ListClass.__init__
+        original_did_mount = getattr(ListClass, 'did_mount', None)
         
         # Add FletXWidget as parent
         ListClass.__bases__ = (*ListClass.__bases__, FletXWidget)
@@ -853,19 +854,33 @@ def reactive_list(
             
             logger.debug(f"Rebuilt list with {len(items)} items")
 
+        def did_mount(self):
+            """Enhanced did_mount with lifecycle callbacks"""
+
+            if original_did_mount:
+                original_did_mount(self)
+
+            # Call FletXWidget did mount
+            FletXWidget.did_mount(self)
+            
+            logger.debug(f"Mounted reactive List control {ListClass.__name__}")
+
         def will_unmount(self):
             """Cleanup list observer"""
             if self._list_observer:
                 self._list_observer.dispose()
                 self._list_observer = None
             
-            if hasattr(super(), 'will_unmount'):
-                super().will_unmount()
+            # Call Super's will_mount method if any
+            # if hasattr(super(), 'will_unmount'):
+            #     super().will_unmount()
+            FletXWidget.will_unmount(self)
 
         # Inject methods
         ListClass.__init__ = __init__
         ListClass._setup_list_binding = _setup_list_binding
         ListClass._rebuild_list = _rebuild_list
+        ListClass.did_mount = did_mount
         ListClass.will_unmount = will_unmount
 
         return ListClass

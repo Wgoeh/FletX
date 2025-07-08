@@ -24,3 +24,4 @@ uv.lock
 dist/*
 build/*
 **/test_routing.py
+examples/*

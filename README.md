@@ -88,7 +88,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletXr==0.1.4.dev1
+pip install FletXr --pre
 ```
 
 ### Create project
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
 ## Core Features 🧠
 
-### 1. Reactive State Management
+### 1. Controllers
 ```python
 class SearchController(FletXController):
     """Search controller"""
@@ -209,7 +209,6 @@ class SearchController(FletXController):
     def __init__(self):
         self.query = RxStr("")
         self.results = RxList([])
-        self.is_loading = RxBool(False)
         self.is_enabled = RxBool(True)
         
         super().__init__()
@@ -244,7 +243,23 @@ class SearchController(FletXController):
         # Other actions here...
 ```
 
-### 2. Smart Routing
+### 2. Pages (Screens)
+```python
+class UserPage(FletXPage):
+
+    def __init__(self):
+        self.news_ctrl: NewsController = FletX.find(
+            NewsController, tag = 'news_ctrl'
+        )
+        super().__init__()
+
+        ...
+
+    def build(self):
+        return ft.Text('Hello world!')
+```
+
+### 3. Smart Routing
 ```python
 # Define routes
 from flex.navigation import router_config, navigate
@@ -268,9 +283,25 @@ router_config.add_routes([
 ])
 # Navigate programmatically
 navigate("/users/123")
+
 ```
 
-### 3. Dependency Injection
+### 4. Services
+```python
+class NewsService(FletXService):
+    """News Service"""
+
+    def __init__(self, test_mode: bool = False, *args, **kwargs):
+        self.base_url = ""
+        self.max_per_page: int = 20
+        self.test_mode: bool = test_mode
+        self.newsapi = NewsApiClient(api_key = os.environ.get('NEWS_APIKEY'))
+
+        # Init base class
+        super().__init__(**kwargs)
+```
+
+### 5. Dependency Injection
 ```python
 # Register services
 FletX.put(AuthService(), tag="auth")
@@ -279,7 +310,7 @@ FletX.put(AuthService(), tag="auth")
 auth_service = FletX.find(AuthService, tag="auth")
 ```
 
-### 4. Reactive Widgets
+### 6. Reactive Widgets
 FletX allows you to quickly create reactive widgets from flet Controls by using
 reactive widget decorators.
 ```python
@@ -294,128 +325,12 @@ from fletx.decorators import (
 ---
 
 
-## Advanced Usage 🛠️
-
-### Subrouters
-1. Basic usage
-```python
-# Create a separate router for admin module
-admin_module = ModuleRouter()
-admin_module.name = 'admin'
-
-# Define routes for admin_module
-admin_module.add_routes([
-    {"path": "/", "component": AdminHomePage},
-    {"path": "/users", "component": AdminUsersPage},
-    {"path": "/settings", "component": AdminSettingsPage}
-])
-
-# Register the admin routing module to the main router config 
-router_config.add_module_routes("/admin", admin_module)
-
-# URLs become:
-# /admin/ -> AdminHomePage
-# /admin/users -> AdminUsersPage
-# /admin/settings -> AdminSettingsPage
-```
-
-2. Advanced Usage (OOP)
-```python
-admin_routes = [
-    {"path": "/", "component": AdminHomePage},
-    {"path": "/users", "component": AdminUsersPage},
-    {"path": "/settings", "component": AdminSettingsPage}
-]
-
-@register_router
-class AdminRouter(ModuleRouter):
-    """My Admin Routing Module."""
-
-    name = 'Admin'
-    base_path = '/admin'
-    is_root = false
-    routes = admin_routes
-    sub_routers = []
-
-@register_router
-class MyAppRouter(ModuleRouter):
-    """My Application Routing Module."""
-
-    name = 'MyAppRouter'
-    base_path = '/'
-    is_root = True
-    routes = []
-    sub_routers = [AdminRouter]
-```
-
-### Route Transitions
-```python
-from fletx.core.navigation.transitions import (
-    RouteTransition, TransitionType
-)
-
-routes = [
-    {
-        'path': '/login',
-        'component': LoginPage,
-        'meta':{
-            'transition': RouteTransition(
-                transition_type = TransitionType.ZOOM_IN,
-                duration = 350
-            )
-        }
-    },
-    {
-        'path': '/dashboard',
-        'component': DashboardHomePage,
-        'meta':{
-            'transition': RouteTransition(
-                transition_type = TransitionType.FLIP_HORIZONTAL,
-                duration = 350
-            )
-        }
-    },
-]
-```
-
-### Middleware and Guards
-```python
-
-routes = [
-    {
-        'path': '/dashboard',
-        'component': DashboardHomePage,
-        'guards': [AuthGuard()],
-        'middlewares': [AnalyticsMiddleware()],
-        'meta':{
-            'transition': RouteTransition(
-                transition_type = TransitionType.FLIP_HORIZONTAL,
-                duration = 350
-            )
-        }
-    },
-    ...
-]
-...
-```
-
----
-
-## Performance Benchmarks 📊
-
-| Operation         | FletX | Pure Flet |
-|-------------------|-------|-----------|
-| State Update      | 0.2ms | 1.5ms     |
-| Route Navigation  | 5ms   | 15ms      |
-| DI Resolution     | 0.1ms | N/A       |
-
----
-
 ## Community & Support 💬
 
-- [Documentation](https://alldotpy.github.io/FletX/) 📚 (under contructions.)
+- [Documentation](https://alldotpy.github.io/FletX/) 📚 (draft)
 - [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
+- [Examples Projects](https://github.com/AllDotPy/Awsome-FletX-Example-Apps.git) 🚀
 
 ---
 

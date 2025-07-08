@@ -1,5 +1,5 @@
 <p align = 'center'>
-    <img src='https://github.com/AllDotPy/FletX/blob/master/fletx.png?raw=true' height = '100'></img>
+    <img src='https://github.com/AllDotPy/FletX/blob/master/fletx_t.png?raw=true' height = '100'></img>
 </p>
 
 # FletX 🚀  
@@ -35,7 +35,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
       </td>
       <td rowspan="2">
         Todo App
-        <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/todo.gif?raw=true" width="300">
+        <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/routing.gif?raw=true" width="300">
       </td>
     </tr>
     <tr >
@@ -64,7 +64,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletXr==0.1.4.dev1
+pip install FletXr==0.1.4.a0
 ```
 
 ### Create project
@@ -269,7 +269,7 @@ from fletx.decorators import (
 
 ## Community & Support 💬
 
-- [Documentation](https://fletx.dev/docs) 📚 (not available for now.)
+- [Documentation](https://alldotpy.github.io/FletX/) 📚.
 - [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
 
