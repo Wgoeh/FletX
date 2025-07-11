@@ -274,11 +274,11 @@ router_config.add_routes([
 router_config.add_routes([
     {
         "path": "/users/:id",
-        "component": lambda route: UserDetailPage(route.params['id'])
+        "component": UserDetailPage
     },
     {
         "path": "/products/*category",
-        "component": lambda route: ProductsPage(route.params['category'])
+        "component": ProductsPage
     }
 ])
 # Navigate programmatically
