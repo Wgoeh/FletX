@@ -245,7 +245,7 @@ class SearchController(FletXController):
 
 ### 2. Pages (Screens)
 ```python
-class UserPage(FletXPage):
+class NewsPage(FletXPage):
 
     def __init__(self):
         self.news_ctrl: NewsController = FletX.find(
@@ -262,7 +262,7 @@ class UserPage(FletXPage):
 ### 3. Smart Routing
 ```python
 # Define routes
-from flex.navigation import router_config, navigate
+from fletx.navigation import router_config, navigate
 
 # 1. simple routing
 router_config.add_routes([
