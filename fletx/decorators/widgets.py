@@ -810,9 +810,10 @@ def reactive_list(
             
             self._list_observer = None
             self._current_controls = []
-            
-            # Setup list binding
-            self._setup_list_binding()
+
+            # Setup a basic size animation
+            if animate_changes:
+                self.animate_size = True
 
         def _setup_list_binding(self):
             """Setup reactive binding for list items"""
@@ -862,6 +863,9 @@ def reactive_list(
 
             # Call FletXWidget did mount
             FletXWidget.did_mount(self)
+
+            # Setup list binding, once the widget is mounted
+            self._setup_list_binding()
             
             logger.debug(f"Mounted reactive List control {ListClass.__name__}")
 
@@ -872,8 +876,7 @@ def reactive_list(
                 self._list_observer = None
             
             # Call Super's will_mount method if any
-            # if hasattr(super(), 'will_unmount'):
-            #     super().will_unmount()
+            super(ListClass,self).will_unmount()
             FletXWidget.will_unmount(self)
 
         # Inject methods

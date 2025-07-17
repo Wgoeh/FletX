@@ -361,6 +361,19 @@ class RxList(Reactive[List[T]]):
         """clear value"""
         self._value.clear()
         self._notify_observers()
+
+    def pop(self,idx: int = -1):
+        """pop an element equivalent to list.pop()"""
+
+        item = self._value.pop(idx)
+        self._notify_observers()
+        return item
+    
+    def extend(self, other: list):
+        """Extends current RxList with the given pthon list."""
+
+        self._value.extend(other)
+        self._notify_observers()
     
     def __len__(self):
         return len(self._value)
