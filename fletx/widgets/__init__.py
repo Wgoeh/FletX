@@ -1,8 +1,9 @@
-from fletx.core.widget import FletXWidget
-from fletx.widgets.reactive_builder import ReactiveBuilder
+# from fletx.widgets.reactive_builder import ReactiveBuilder
+from fletx.widgets.obx import Obx
 
 
 __all__ = [
-    "ReactiveBuilder",
+    # "ReactiveBuilder",
     "FletXWidget",
+    "Obx"
 ]

@@ -2,7 +2,7 @@ from fletx.decorators.widgets import (
     reactive_control, simple_reactive,
     reactive_form, reactive_list, 
     reactive_state_machine, two_way_reactive,
-    computed_reactive
+    computed_reactive, obx
 )
 from fletx.decorators.reactive import (
     reactive_batch, reactive_debounce,
@@ -24,6 +24,7 @@ __all__ = [
     "reactive_state_machine",
     "two_way_reactive",
     "computed_reactive",
+    "obx",
 
     # Reactives
     "reactive_property",

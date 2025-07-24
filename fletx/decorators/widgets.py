@@ -22,9 +22,53 @@ from fletx.core import (
     BindingType, BindingConfig, ComputedBindingConfig,
     FormFieldValidationRule
 )
+from fletx.widgets import Obx
 from fletx.utils import get_logger #, get_page
 
 logger = get_logger("FletX.WidgetDecorators")
+
+
+####
+##      REACTIVE BUILDER DECORATOR
+#####
+def obx(
+        builder_fn: Callable[...,Union[ft.Control,List[ft.Control]]]
+    ) -> Callable[[], ft.Control]:
+    """
+    Decorator that creates a reactive widget from a builder function.
+    Returns the actual widget, not an Obx wrapper.
+
+    Args:
+        builder_fn: Function that return a flet control
+
+    Returns:
+        Function that returns the actual Control (preserves widget identity)
+
+    Usage:
+    ```python
+    @obx
+    def counter_text(self):
+        return ft.Text(
+            value = f'Count: {self.ctrl.count}',
+            size = 50, 
+            weight = "bold",
+            color = 'red' if self.ctrl.count.value % 2 == 0 else 'white'
+        )
+    ```
+    """
+
+    @wraps(builder_fn)
+    def wrapper(*args, **kwargs):
+
+        # Create a new builder function that calls the original with args
+        def internal_builder():
+            return builder_fn(*args, **kwargs)
+        
+        # Create Obx wrapper and return the actual widget
+        obx_wrapper = Obx(internal_builder)
+        return obx_wrapper 
+    
+    return wrapper
 
 
 ####

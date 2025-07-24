@@ -6,13 +6,12 @@ readme = "PYPI.md"
 authors = [{ name = "#Einswilli", email = "einswilligoeh@email.com" }]
 requires-python = "==3.12"
 dependencies = [
-    "aiohttp>=3.12.13",
+    "aiohttp>=3.9.5",
     "build>=1.2.2.post1",
     "flet[all]>=0.28.3",
     "httpx>=0.28.1",
     "pydantic>=2.11.5",
     "setuptools>=80.8.0",
-    "uvloop>=0.21.0",
 ]
 
 [project.scripts]
