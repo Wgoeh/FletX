@@ -35,7 +35,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
       </td>
       <td rowspan="2">
         Todo App
-        <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/routing.gif?raw=true" width="300">
+        <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/reactive_list.gif?raw=true" width="300">
       </td>
     </tr>
     <tr >
@@ -64,7 +64,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 
 ### Installation
 ```bash
-pip install FletXr==0.1.4.a0
+pip install FletXr==0.1.4.a1
 ```
 
 ### Create project
@@ -112,9 +112,7 @@ from fletx.core import (
     FletXPage, FletXController, RxInt, RxStr
 )
 from fletx.navigation import router_config
-from fletx.decorators import (
-    simple_reactive
-)
+from fletx.widgets import Obx
 
 
 class CounterController(FletXController):
@@ -124,24 +122,19 @@ class CounterController(FletXController):
         super().__init__()
 
 
-@simple_reactive(
-    bindings={
-        'value': 'text'
-    }
-)
-class MyReactiveText(ft.Text):
-
-    def __init__(self, rx_text: RxStr, **kwargs):
-        self.text: RxStr = rx_text
-        super().__init__(**kwargs)
-
 class CounterPage(FletXPage):
     ctrl = CounterController()
     
     def build(self):
         return ft.Column(
             controls = [
-                MyReactiveText(rx_text=self.ctrl.count, size=200, weight="bold"),
+                Obx(
+                    builder_fn = lambda: ft.Text(
+                        value = f'{self.ctrl.count}',
+                        size = 100, 
+                        weight = ft.FontWeight.BOLD
+                    )
+                ),
                 ft.ElevatedButton(
                     "Increment",
                     on_click = lambda e: self.ctrl.count.increment()  # Auto UI update
@@ -260,7 +253,7 @@ reactive widget decorators.
 from fletx.decorators import (
     reactive_control, simple_reactive,
     reactive_state_machine, reactive_form,
-    two_way_reactive, reactive_list,
+    two_way_reactive, reactive_list, obx
     ...
 )
 ```
@@ -272,6 +265,7 @@ from fletx.decorators import (
 - [Documentation](https://alldotpy.github.io/FletX/) 📚.
 - [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
+- [Video Courses](https://www.youtube.com/watch?v=BSp7TUu3Dvo) 🎥
 
 ---
 

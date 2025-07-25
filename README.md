@@ -45,6 +45,7 @@ FletX brings Flutter's beloved **GetX** patterns to Python, combining Flet's UI 
 Perfect for building **desktop, web, and mobile apps** with Python at lightning speed.
 
 ---
+
 ## Showcase
 
 <div align="center">
@@ -343,6 +344,10 @@ from fletx.decorators import (
 - [Discord Community](https://discord.gg/GRez7BTZVy) 💬
 - [Issue Tracker](https://github.com/AllDotPy/FletX/issues) 🐛
 - [Examples Projects](https://github.com/AllDotPy/Awsome-FletX-Example-Apps.git) 🚀
+- [Video Courses](https://www.youtube.com/watch?v=BSp7TUu3Dvo) 🎥
+
+<!-- ## Videos
+[![Course](https://img.youtube.com/vi/BSp7TUu3Dvo/maxresdefault.jpg)](https://www.youtube.com/watch?v=BSp7TUu3Dvo) -->
 
 ---
 

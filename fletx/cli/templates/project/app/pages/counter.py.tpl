@@ -2,6 +2,7 @@ import flet as ft
 from fletx.core import (
     FletXPage
 )
+from fletx.widgets import Obx
 
 from ..controllers.counter import CounterController
 from ..components import MyReactiveText
@@ -40,11 +41,12 @@ class CounterPage(FletXPage):
                                 size = 20,
                                 weight = ft.FontWeight.BOLD
                             ),
-                            MyReactiveText(
-                                value = '0',
-                                rx_text = self.ctrl.count, # Auto update when count changes
-                                size = 100, 
-                                weight = ft.FontWeight.BOLD
+                            Obx(
+                                builder_fn = lambda: ft.Text(
+                                    value = f'{self.ctrl.count}',
+                                    size = 100, 
+                                    weight = ft.FontWeight.BOLD
+                                )
                             ),
                             ft.ElevatedButton(
                                 "Increment",
