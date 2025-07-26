@@ -88,6 +88,10 @@ class FletXCLI:
                     self.print_help()
                 return
             
+            elif command_name in ['-v', '--version', 'version']:
+                self.print_vertion()
+                return
+            
             # Get and execute the command
             command_class = CommandRegistry.get(command_name)
             command_instance = command_class()
@@ -176,6 +180,12 @@ class FletXCLI:
         print("For help on a specific command, use:")
         print("  fletx <command> --help")
         print("  fletx help <command>")
+
+    def print_vertion(self):
+        """Print current fletx version"""
+        from fletx import __version__
+
+        print(f'FletX v{__version__}')
     
     def print_command_help(self, command_name: str):
         """Print help for a specific command."""
