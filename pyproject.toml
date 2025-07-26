@@ -16,8 +16,9 @@ dependencies = [
 fletx = "fletx.__main__:main"
 
 [project.urls]
-"source" = "https://alldotpy.github.io/FletX"
-"Homepage" = "https://github.com/AllDotPy/FletX"
+Homepage = "https://alldotpy.github.io/FletX"
+Repository = "https://github.com/AllDotPy/FletX"
+Documentation = "https://alldotpy.github.io/FletX"
 
 [project.optional-dependencies]
 dev = [
