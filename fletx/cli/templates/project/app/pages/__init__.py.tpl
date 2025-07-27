@@ -6,7 +6,9 @@ Version: {{ version }}
 """
 
 from .counter import CounterPage
+from .not_found import NotFoundPage
 
 __all__ = [
-    'CounterPage'
+    'CounterPage',
+    'NotFoundPage'
 ]
