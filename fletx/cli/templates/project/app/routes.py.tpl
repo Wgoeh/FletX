@@ -10,13 +10,17 @@ from fletx.navigation import (
 )
 from fletx.decorators import register_router
 
-from .pages.counter import CounterPage
+from .pages import CounterPage, NotFoundPage
 
 # Define {{ project_name | pascal_case }} routes here
 routes = [
     {
         'path': '/',
         'component': CounterPage,
+    },
+    {
+        'path': '/**',
+        'component': NotFoundPage,
     },
 ]
 
