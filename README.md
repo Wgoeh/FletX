@@ -192,7 +192,7 @@ def main():
     # Defining route
     router_config.add_route(
         path = '/', 
-        componentm = CounterPage
+        component = CounterPage
     )
     app = FletXApp(
         title = "My Counter",
