@@ -27,8 +27,7 @@ class ObxController:
         self._uid: Optional[str] = None
         self._dependencies: Set[Reactive] = set()
         self._builder: Optional[Callable] = None
-        self._current_uid = None 
-        self._pending_uids: Dict[str,Any] = {}  # Track all potential UIDs
+        # self._current_uid = None 
         self._logger = get_logger("FletX.ObxController")
         self._is_building = False
 
@@ -41,7 +40,7 @@ class ObxController:
     def set_uid(self, uid:str):
         """ste the wapped control uid."""
         self._uid = uid
-        print(self._uid)
+        # print(self._uid)
 
     def set_builder(self, builder_fn: Callable):
         """Set the builder function"""
@@ -52,17 +51,6 @@ class ObxController:
         """Set the widget reference"""
 
         self._widget_ref = widget_ref
-
-    def update_uid(self, new_uid):
-        """Update tracked UID"""
-
-        if new_uid and new_uid != self._current_uid:
-            self._current_uid = new_uid
-            self._pending_uids[new_uid] = True
-
-    def get_valid_uid(self):
-        """Returns the most recent UID"""
-        return self._current_uid
 
     def add_dependency(self, reactive_obj: Reactive):
         """Add a reactive object as dependency"""
@@ -98,7 +86,8 @@ class ObxController:
                 'ref': self._widget_ref,
                 '_Control__uid': current_widget.uid,
                 '_Control__page': current_widget.page,
-                'did_mount': getattr(current_widget, 'did_mount', None)
+                'did_mount': getattr(current_widget, 'did_mount', None),
+                'will_unmount': getattr(current_widget, 'will_unmount', None)
             }
             
             # Track dependencies during rebuild
@@ -276,6 +265,10 @@ class Obx:
     
     def is_isolated(self):
         return self._widget.is_isolated()
+
+    def will_unmount(self):
+        self._widget.will_unmount()
+        self.dispose()
     
     def dispose(self):
         """Clean up resources when wrapper is disposed"""

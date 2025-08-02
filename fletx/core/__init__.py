@@ -11,6 +11,7 @@ from fletx.core.types import (
 )
 from fletx.core.widget import FletXWidget
 from fletx.core.services import FletXService
+from fletx.core.http import HTTPClient
 
 __all__ = [
     'FletXController',
@@ -18,6 +19,7 @@ __all__ = [
     'Effect',
     'FletXPage',
     'FletXService',
+    'HTTPClient',
     'ReactiveDependencyTracker',
     'Observer',
     'Reactive',

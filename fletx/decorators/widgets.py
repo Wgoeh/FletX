@@ -790,7 +790,13 @@ def reactive_form(
             for observer in self._validation_observers:
                 observer.dispose()
             self._validation_observers.clear()
+
+            for rx_obj in form_fields.values():
+                reactive_obj = getattr(self, rx_obj, None)
+                if reactive_obj and hasattr(reactive_obj, 'dispose'):
+                    reactive_obj.dispose()
             
+            super(FormClass, self).will_unmount()
             FletXWidget.will_unmount(self)
 
         # Inject methods
