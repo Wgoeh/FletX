@@ -17,7 +17,7 @@ class SharedLogger:
     
     _logger: Optional[logging.Logger] = None
     _lock = threading.Lock()
-    debug_mode = os.getenv('FLETX_DEBUG','0') == 1
+    debug_mode = os.getenv('FLETX_DEBUG','0') == '1'
     
     @classmethod
     def get_logger(cls, name: str = "FletX") -> logging.Logger:
