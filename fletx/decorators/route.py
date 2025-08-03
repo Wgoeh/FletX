@@ -15,10 +15,10 @@ from fletx.core.routing.config import (
 ####    REGISTER ROUTER
 def register_router(cls: ModuleRouter):
     """Decorator that automatically registers module routes"""
-    # Initialisation du routeur parent
+    # Parent router initialization
     router = cls()
     
-    # Enregistrement dans la config globale
+    # Register router to the globale config 
     if cls.is_root:
         router_config.add_module_routes('', router)
     
