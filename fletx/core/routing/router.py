@@ -133,6 +133,11 @@ class FletXRouter:
         if self.state.navigation_mode in [NavigationMode.VIEWS, NavigationMode.HYBRID]:
             self.logger.debug("Flet view popped")
             self.go_back()
+
+    def set_navigation_mode(self, mode: NavigationMode):
+        """Set Router Navigation mode"""
+
+        self.state.navigation_mode = mode
     
     # @worker_task
     async def navigate(

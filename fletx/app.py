@@ -10,10 +10,12 @@ from typing import (
     Dict, Type, Optional, Callable, Any, Union, List
 )
 
+from fletx.core.routing.models import NavigationMode
 from fletx.core.routing.router import FletXRouter
 # from fletx.core.factory import FletXWidgetRegistry
 from fletx.utils.logger import SharedLogger
 from fletx.utils.context import AppContext
+from fletx.utils import run_async
 from fletx.core.concurency.event_loop import EventLoopManager
 
 
@@ -26,6 +28,7 @@ class FletXApp:
     def __init__(
         self, 
         initial_route: str = "/",
+        navigation_mode: NavigationMode = NavigationMode.VIEWS,
         theme_mode: ft.ThemeMode = ft.ThemeMode.SYSTEM,
         debug: bool = False,
         title: str = "FletX App",
@@ -42,6 +45,7 @@ class FletXApp:
         
         Args:
             initial_route: Initial route path
+            navigation_mode: router navigation mode (NATIVE, HYBRID, VIEWS)
             theme_mode: Theme mode (SYSTEM, LIGHT, DARK)
             debug: Enable debug mode
             title: Application title
@@ -54,6 +58,7 @@ class FletXApp:
         """
 
         self.initial_route = initial_route
+        self.navigation_mode = navigation_mode
         self.theme_mode = theme_mode
         self.debug = debug
         self.title = title
@@ -137,9 +142,11 @@ class FletXApp:
         """handle system exit signals and call handlers"""
 
         # Just execute on_system_exit_hooks
-        self._execute_hooks(
-            self.on_system_exit,
-            'on_system_exit'
+        run_async(
+            self._execute_hooks(
+                self.on_system_exit,
+                'on_system_exit'
+            )
         )
     
     def configure_window(self, **config):
@@ -231,7 +238,9 @@ class FletXApp:
             AppContext.set_data("event_loop", self._loop_manager.loop)
             
             # Initialize Router
-            FletXRouter.initialize(page, initial_route=self.initial_route)
+            FletXRouter.initialize(
+                page, initial_route = self.initial_route
+            ).set_navigation_mode(self.navigation_mode)
             
             self._is_initialized = True
             self.logger.info("FletX Application initialized successfully (async mode)")
