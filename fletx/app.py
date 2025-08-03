@@ -142,7 +142,7 @@ class FletXApp:
         """handle system exit signals and call handlers"""
 
         # Just execute on_system_exit_hooks
-        run_async(
+        self._loop_manager.run_until_complete(
             self._execute_hooks(
                 self.on_system_exit,
                 'on_system_exit'
