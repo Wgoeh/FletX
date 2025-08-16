@@ -154,6 +154,12 @@ class FletXPage(ft.Container, ABC):
             return 0.0
         return sum(self._render_times) / len(self._render_times)
 
+    @property
+    def view(self):
+        """Get the Flet active view"""
+
+        return self.page_instance.views[-1]
+
     # Abstract methods
     @abstractmethod
     def build(self) -> Union[ft.Control, List[ft.Control]]:
@@ -162,6 +168,95 @@ class FletXPage(ft.Container, ABC):
         Must be implemented by derived classes.
         """
         pass
+
+    # Navigation widgets
+    def build_app_bar(self) -> Optional[ft.AppBar]:
+        """
+        Override this method to build a custom app bar.
+        Return None to use the default app bar or hide it.
+        """
+        
+        return None
+    
+    def build_floating_action_button(self) -> Optional[ft.FloatingActionButton]:
+        """
+        Override this method to build a custom floating action button.
+        Return None if no floating action button is needed.
+        """
+
+        return None
+    
+    def build_floating_action_button(self) -> Optional[ft.FloatingActionButton]:
+        """
+        Override this method to build a custom floating action button.
+        Return None if no floating action button is needed.
+        """
+
+        return None
+    
+    def build_floating_action_button_location(self) -> Optional[ft.FloatingActionButtonLocation]:
+        """
+        Override this method to build a custom floating action button Location.
+        Return None if no floating action button is needed.
+        """
+
+        return None
+    
+    def build_drawer(self) -> Optional[ft.NavigationDrawer]:
+        """
+        Override this method to build a custom navigation drawer.
+        Return None if no drawer is needed.
+        """
+
+        return None
+    
+    def build_end_drawer(self) -> Optional[ft.NavigationDrawer]:
+        """
+        Override this method to build a custom navigation end drawer.
+        Return None if no drawer is needed.
+        """
+
+        return None
+    
+    def build_bottom_app_bar(self) -> Optional[ft.BottomAppBar]:
+        """
+        Override this method to build a custom bottom app bar.
+        Return None if no bottom app bar is needed.
+        """
+
+        return None
+    
+    def build_navigation_bar(self):
+        """
+        Override this method to build a custom navigation bar.
+        Return None if no bottom app bar is needed.
+        """
+
+        return None
+    
+    def build_navigation_widgets(self):
+        """Build all needed Navigation widgets."""
+
+        # AppBar
+        self.view.appbar = self.build_app_bar()
+
+        # Bottom AppBar
+        self.view.bottom_appbar = self.build_bottom_app_bar()
+
+        # Nav Drawer
+        self.view.drawer = self.build_drawer()
+
+        # Navigation Bar
+        self.view.navigation_bar = self.build_navigation_bar()
+
+        # Floating Action Button
+        self.view.floating_action_button = self.build_floating_action_button()
+
+        # Floating Action Button Location
+        self.view.floating_action_button_location = self.build_floating_action_button_location()
+
+        # End Drawer
+        self.view.end_drawer = self.build_end_drawer()
     
     # Lifecycle methods
     def before_on_init(self):
@@ -169,6 +264,9 @@ class FletXPage(ft.Container, ABC):
 
         self.logger.debug(f"Page {self.__class__.__name__} will mount")
         self._state = PageState.ACTIVE
+
+        # Build Navigation widgets
+        self.build_navigation_widgets()
 
         # Call On init hook
         self.on_init()
@@ -446,6 +544,70 @@ class FletXPage(ft.Container, ABC):
 
         if self._enable_gestures:
             self._gesture_handlers['scale'] = callback
+
+    def set_app_bar(self, app_bar: Optional[ft.AppBar]):
+        """Set the app bar"""
+
+        self.view.appbar = app_bar
+        self.refresh()
+    
+    def set_floating_action_button(
+        self, 
+        fab: Optional[ft.FloatingActionButton],
+        location: Optional[ft.FloatingActionButtonLocation] = None
+    ):
+        """Set the floating action button"""
+
+        self.view.floating_action_button = fab
+        if location:
+            self.view.floating_action_button_location = location
+        self.refresh()
+    
+    def set_drawer(self, drawer: Optional[ft.NavigationDrawer]):
+        """Set the navigation drawer"""
+
+        self.view.drawer = drawer
+        self.refresh()
+    
+    def set_end_drawer(self, end_drawer: Optional[ft.NavigationDrawer]):
+        """Set the end navigation drawer"""
+
+        self.view.end_drawer = end_drawer
+        self.refresh()
+    
+    def set_bottom_app_bar(self, bottom_app_bar: Optional[ft.BottomAppBar]):
+        """Set the bottom app bar"""
+
+        self.view.bottom_appbar = bottom_app_bar
+        self.refresh()
+    
+    def open_drawer(self):
+        """Open the navigation drawer"""
+
+        page = self.page_instance
+        if page and self.view.drawer:
+            page.open(self.view.drawer)
+    
+    def close_drawer(self):
+        """Close the navigation drawer"""
+
+        page = self.page_instance
+        if page and self.view.drawer:
+            page.close(self.view.drawer)
+    
+    def open_end_drawer(self):
+        """Open the end navigation drawer"""
+
+        page = self.page_instance
+        if page and self.view.end_drawer:
+            page.open(self.view.end_drawer)
+    
+    def close_end_drawer(self):
+        """Close the end navigation drawer"""
+
+        page = self.page_instance
+        if page and self.view.end_drawer:
+            page.close(self.view.end_drawer)
     
     def refresh(self):
         """Refresh the page"""
