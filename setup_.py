@@ -6,7 +6,7 @@ with open("PYPI.md", "r", encoding="utf-8") as fh:
 
 setup(
     name = 'FletXr',
-    version = '0.1.4.a0',
+    version = '0.1.4.b1',
     packages = find_packages(),
     install_requires = [
         "aiohttp>=3.12.13",
