@@ -14,8 +14,7 @@
 Every service includes an HTTP client (`http_client`) that simplifies remote requests.
 
 ```python
-from fletx.core import HTTPClient
-from fletx.core.services import FletXService
+from fletx.core import HTTPClient, FletXService
 
 class UserAPIService(FletXService):
     def __init__(self):
@@ -76,8 +75,7 @@ Check `self.state` to access the current status.
 ### 🧪 Full Example
 
 ```python
-from fletx.core import HTTPClient
-from fletx.core.services import FletXService
+from fletx.core import HTTPClient, FletXService
 
 class UserAPIService(FletXService):
     def __init__(self):
