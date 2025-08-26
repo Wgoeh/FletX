@@ -234,6 +234,18 @@ class FletXPage(ft.Container, ABC):
 
         return None
     
+    def build_bottom_sheet(
+        self, 
+        *args, 
+        **extra_kwargs
+    ) -> ft.BottomSheet:
+        """
+        Builds bottom sheet.
+        Override this method to use a custom bottom sheet.
+        """
+
+        return ft.BottomSheet()
+    
     def build_navigation_widgets(self):
         """Build all needed Navigation widgets."""
 
@@ -264,9 +276,6 @@ class FletXPage(ft.Container, ABC):
 
         self.logger.debug(f"Page {self.__class__.__name__} will mount")
         self._state = PageState.ACTIVE
-
-        # Build Navigation widgets
-        self.build_navigation_widgets()
 
         # Call On init hook
         self.on_init()
@@ -608,6 +617,21 @@ class FletXPage(ft.Container, ABC):
         page = self.page_instance
         if page and self.view.end_drawer:
             page.close(self.view.end_drawer)
+
+    def open_bottom_sheet(
+        self, content: ft.Control, 
+        on_dismiss: Optional[Callable[[],]] = None
+    ):
+        """Shows a given content in a bottom sheet"""
+
+        # First get the bottom sheet widget to use
+        bts = self.build_bottom_sheet()
+
+        # Set content 
+        bts.content = content
+        bts.on_dismiss = on_dismiss
+
+        self.page_instance.open(bts)
     
     def refresh(self):
         """Refresh the page"""
@@ -721,7 +745,11 @@ class FletXPage(ft.Container, ABC):
 
         try:
             start_time = datetime.now()
+            # Build Page Content
             content = self.build()
+
+            # Then Navigation widgets
+            self.build_navigation_widgets()
             end_time = datetime.now()
             
             # Measure build time

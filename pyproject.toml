@@ -9,7 +9,7 @@ maintainers = [{ name = "#Einswilli", email = "einswilligoeh@email.com" }]
 requires-python = "==3.12"
 keywords = [
     "fletx", "fletxr", "flet", "reactive state",
-    "routing", "di", "dependency ijection"
+    "routing", "di", "dependency injection"
 ]
 dependencies = [
     "aiohttp>=3.9.5",
