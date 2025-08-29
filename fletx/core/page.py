@@ -632,6 +632,19 @@ class FletXPage(ft.Container, ABC):
         bts.on_dismiss = on_dismiss
 
         self.page_instance.open(bts)
+
+    def show_loader(
+        self, 
+        content: Optional[ft.Control] = None, 
+        on_dismiss: Optional[Callable[[ft.ControlEvent]]] = None
+    ):
+        """Show a given content in a dialog"""
+
+        dialog = ft.AlertDialog(
+            content = content if content else ft.ProgressRing(),
+            on_dismiss = on_dismiss
+        )
+        self.page_instance.open(dialog)
     
     def refresh(self):
         """Refresh the page"""
