@@ -638,7 +638,7 @@ class FletXPage(ft.Container, ABC):
         content: Optional[ft.Control] = None, 
         on_dismiss: Optional[Callable[[ft.ControlEvent]]] = None
     ):
-        """Show a given content in a dialog"""
+        """Show a given content in a ft.AlertDialog"""
 
         dialog = ft.AlertDialog(
             content = content if content else ft.ProgressRing(),
