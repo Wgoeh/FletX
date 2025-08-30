@@ -620,7 +620,7 @@ class FletXPage(ft.Container, ABC):
 
     def open_bottom_sheet(
         self, content: ft.Control, 
-        on_dismiss: Optional[Callable[[],]] = None
+        on_dismiss: Optional[Callable[[ft.ControlEvent], Any]] = None
     ):
         """Shows a given content in a bottom sheet"""
 
@@ -636,7 +636,7 @@ class FletXPage(ft.Container, ABC):
     def show_loader(
         self, 
         content: Optional[ft.Control] = None, 
-        on_dismiss: Optional[Callable[[ft.ControlEvent]]] = None
+        on_dismiss: Optional[Callable[[ft.ControlEvent], Any]] = None
     ):
         """Show a given content in a ft.AlertDialog"""
 
