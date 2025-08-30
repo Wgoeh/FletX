@@ -89,7 +89,7 @@ class FletXCLI:
                 return
             
             elif command_name in ['-v', '--version', 'version']:
-                self.print_vertion()
+                self.print_version()
                 return
             
             # Get and execute the command
@@ -181,7 +181,7 @@ class FletXCLI:
         print("  fletx <command> --help")
         print("  fletx help <command>")
 
-    def print_vertion(self):
+    def print_version(self):
         """Print current fletx version"""
         from fletx import __version__
 
