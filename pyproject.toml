@@ -6,7 +6,7 @@ readme = "PYPI.md"
 license = {file = "LICENSE"}
 authors = [{ name = "AllDotPy", email = "hello@alldotpy.com" }]
 maintainers = [{ name = "#Einswilli", email = "einswilligoeh@email.com" }]
-requires-python = "==3.12"
+requires-python = ">=3.12"
 keywords = [
     "fletx", "fletxr", "flet", "reactive state",
     "routing", "di", "dependency injection"
@@ -16,6 +16,7 @@ dependencies = [
     "flet[all]>=0.28.3",
     "pydantic>=2.11.5",
     "pytest>=8.4.0",
+    "packaging>=21.0",
 ]
 
 [project.scripts]
