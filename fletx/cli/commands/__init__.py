@@ -14,7 +14,9 @@ from fletx.cli.commands.generate import (
 
 from fletx.cli.commands.testproject import (
     TestCommand
-
+)
+from fletx.cli.commands.check import (
+    CheckCommand
 )
 
 __all__ = [
@@ -24,5 +26,6 @@ __all__ = [
     'TemplateCommand',
     'NewProjectCommand',
     'RunCommand',
-    'TestCommand'
+    'TestCommand',
+    'CheckCommand'
 ]
