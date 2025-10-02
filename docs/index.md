@@ -55,7 +55,6 @@ FletX is built on 3 core principles:
 
 ## ⚡ Quick Example
 
-```python
 import flet as ft
 
 from fletx.app import FletXApp
@@ -63,33 +62,32 @@ from fletx.core import (
     FletXPage, FletXController, RxInt, RxStr
 )
 from fletx.navigation import router_config
-from fletx.decorators import (
-    simple_reactive
-)
+from fletx.decorators import obx
 
 
 class CounterController(FletXController):
 
     def __init__(self):
-        self.count = RxInt(0)
+        count = RxInt(0)  # Reactive state
         super().__init__()
-
-
-@simple_reactive(bindings={'value': 'text'})
-class MyReactiveText(ft.Text):
-
-    def __init__(self, rx_text: RxStr, **kwargs):
-        self.text: RxStr = rx_text
-        super().__init__(**kwargs)
 
 
 class CounterPage(FletXPage):
     ctrl = CounterController()
 
+    @obx
+    def counter_text(self):
+        return ft.Text(
+            value=f'Count: {self.ctrl.count}',
+            size=50,
+            weight="bold",
+            color='red' if not self.ctrl.count.value % 2 == 0 else 'white'
+        )
+
     def build(self):
         return ft.Column(
             controls=[
-                MyReactiveText(rx_text=self.ctrl.count, size=200, weight="bold"),
+                self.counter_text(),
                 ft.ElevatedButton(
                     "Increment",
                     on_click=lambda e: self.ctrl.count.increment()
@@ -99,7 +97,10 @@ class CounterPage(FletXPage):
 
 
 def main():
-    router_config.add_route(path='/', component=CounterPage)
+    router_config.add_route(
+        path='/',
+        component=CounterPage
+    )
     app = FletXApp(
         title="My Counter",
         initial_route="/",
