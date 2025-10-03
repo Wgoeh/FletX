@@ -25,6 +25,12 @@ class TransitionType(enum.Enum):
     SLIDE_RIGHT = "slide_right"
     SLIDE_UP = "slide_up"
     SLIDE_DOWN = "slide_down"
+    SLIDE_FADE_LEFT = "slide_fade_left"
+    SLIDE_FADE_RIGHT = "slide_fade_right"
+    SLIDE_FADE_UP = "slide_fade_up"
+    SLIDE_FADE_DOWN = "slide_fade_down"
+    FADE_THROUGH = "fade_through"
+    SCALE_FADE = "scale_fade"
     ZOOM_IN = "zoom_in"
     ZOOM_OUT = "zoom_out"
     FLIP_HORIZONTAL = "flip_horizontal"
@@ -166,6 +172,23 @@ class RouteTransition:
             elif actual_type in [TransitionType.ZOOM_IN, TransitionType.ZOOM_OUT]:
                 return await self._apply_zoom(page, new_controls, old_controls, actual_type)
             
+            # Composite: Slide + Fade
+            elif actual_type in [
+                TransitionType.SLIDE_FADE_LEFT,
+                TransitionType.SLIDE_FADE_RIGHT,
+                TransitionType.SLIDE_FADE_UP,
+                TransitionType.SLIDE_FADE_DOWN
+            ]:
+                return await self._apply_slide_fade(page, new_controls, old_controls, actual_type)
+
+            # Composite: Fade Through (Material-like)
+            elif actual_type == TransitionType.FADE_THROUGH:
+                return await self._apply_fade_through(page, new_controls, old_controls)
+
+            # Composite: Scale + Fade
+            elif actual_type == TransitionType.SCALE_FADE:
+                return await self._apply_scale_fade(page, new_controls, old_controls)
+
             # Pushes
             elif actual_type in [
                 TransitionType.PUSH_LEFT, TransitionType.PUSH_RIGHT,
@@ -209,6 +232,10 @@ class RouteTransition:
             TransitionType.SLIDE_RIGHT: TransitionType.SLIDE_LEFT,
             TransitionType.SLIDE_UP: TransitionType.SLIDE_DOWN,
             TransitionType.SLIDE_DOWN: TransitionType.SLIDE_UP,
+            TransitionType.SLIDE_FADE_LEFT: TransitionType.SLIDE_FADE_RIGHT,
+            TransitionType.SLIDE_FADE_RIGHT: TransitionType.SLIDE_FADE_LEFT,
+            TransitionType.SLIDE_FADE_UP: TransitionType.SLIDE_FADE_DOWN,
+            TransitionType.SLIDE_FADE_DOWN: TransitionType.SLIDE_FADE_UP,
             TransitionType.ZOOM_IN: TransitionType.ZOOM_OUT,
             TransitionType.ZOOM_OUT: TransitionType.ZOOM_IN,
             TransitionType.PUSH_LEFT: TransitionType.PUSH_RIGHT,
@@ -288,6 +315,179 @@ class RouteTransition:
         
         return new_controls
     
+    # @worker_task(priority=Priority.CRITICAL)
+    async def _apply_slide_fade(
+        self,
+        page: ft.Page,
+        new_controls: List[ft.Control],
+        old_controls: List[ft.Control],
+        slide_fade_type: TransitionType
+    ) -> List[ft.Control]:
+        """Apply slide + fade transition using offset and opacity."""
+
+        direction_map = {
+            TransitionType.SLIDE_FADE_LEFT: (ft.Offset(1, 0)),
+            TransitionType.SLIDE_FADE_RIGHT: (ft.Offset(-1, 0)),
+            TransitionType.SLIDE_FADE_UP: (ft.Offset(0, 1)),
+            TransitionType.SLIDE_FADE_DOWN: (ft.Offset(0, -1)),
+        }
+
+        start_offset = direction_map[slide_fade_type]
+
+        new_container = ft.Container(
+            content = ft.Column(new_controls, tight=True, expand=True),
+            offset = start_offset,
+            animate_offset = self._create_animation(),
+            opacity = 0,
+            animate_opacity = self._create_animation(),
+            expand = True
+        )
+
+        if old_controls:
+            old_container = ft.Container(
+                content = ft.Column(old_controls, tight=True, expand=True),
+                offset = ft.Offset(0, 0),
+                animate_offset = self._create_animation(),
+                opacity = 1,
+                animate_opacity = self._create_animation(),
+                expand = True
+            )
+
+            stack = ft.Stack([old_container, new_container], expand=True)
+            page.clean()
+            page.add(stack)
+            page.update()
+
+            await asyncio.sleep(0.01)
+            old_container.opacity = 0
+            new_container.offset = ft.Offset(0, 0)
+            new_container.opacity = 1
+            page.update()
+            await asyncio.sleep(self.duration / 1000)
+        else:
+            page.clean()
+            page.add(new_container)
+            page.update()
+
+            await asyncio.sleep(0.01)
+            new_container.offset = ft.Offset(0, 0)
+            new_container.opacity = 1
+            page.update()
+            await asyncio.sleep(self.duration / 1000)
+
+        page.clean()
+        page.add(*new_controls)
+        page.update()
+        return new_controls
+
+    # @worker_task(priority=Priority.CRITICAL)
+    async def _apply_fade_through(
+        self,
+        page: ft.Page,
+        new_controls: List[ft.Control],
+        old_controls: List[ft.Control]
+    ) -> List[ft.Control]:
+        """Apply Material fade-through: old fades out, new fades in with slight scale."""
+
+        mid_scale = 0.92
+
+        new_container = ft.Container(
+            content = ft.Column(new_controls, tight=True, expand=True),
+            opacity = 0,
+            animate_opacity = self._create_animation(),
+            scale = ft.Scale(mid_scale),
+            animate_scale = self._create_animation(),
+            expand = True
+        )
+
+        if old_controls:
+            old_container = ft.Container(
+                content = ft.Column(old_controls, tight=True, expand=True),
+                opacity = 1,
+                animate_opacity = self._create_animation(self.duration // 2),
+                expand = True
+            )
+            stack = ft.Stack([old_container, new_container], expand=True)
+            page.clean()
+            page.add(stack)
+            page.update()
+
+            await asyncio.sleep(0.01)
+            old_container.opacity = 0
+            page.update()
+            await asyncio.sleep((self.duration // 2) / 1000)
+
+            new_container.opacity = 1
+            new_container.scale = ft.Scale(1)
+            page.update()
+            await asyncio.sleep((self.duration // 2) / 1000)
+        else:
+            page.clean()
+            page.add(new_container)
+            page.update()
+
+            await asyncio.sleep(0.01)
+            new_container.opacity = 1
+            new_container.scale = ft.Scale(1)
+            page.update()
+            await asyncio.sleep(self.duration / 1000)
+
+        page.clean()
+        page.add(*new_controls)
+        page.update()
+        return new_controls
+
+    # @worker_task(priority=Priority.CRITICAL)
+    async def _apply_scale_fade(
+        self,
+        page: ft.Page,
+        new_controls: List[ft.Control],
+        old_controls: List[ft.Control]
+    ) -> List[ft.Control]:
+        """Apply scale + fade in for new content while old fades out."""
+
+        new_container = ft.Container(
+            content = ft.Column(new_controls, tight=True, expand=True),
+            opacity = 0,
+            animate_opacity = self._create_animation(),
+            scale = ft.Scale(0.9),
+            animate_scale = self._create_animation(),
+            expand = True
+        )
+
+        if old_controls:
+            old_container = ft.Container(
+                content = ft.Column(old_controls, tight=True, expand=True),
+                opacity = 1,
+                animate_opacity = self._create_animation(),
+                expand = True
+            )
+            stack = ft.Stack([old_container, new_container], expand=True)
+            page.clean()
+            page.add(stack)
+            page.update()
+
+            await asyncio.sleep(0.01)
+            old_container.opacity = 0
+            new_container.opacity = 1
+            new_container.scale = ft.Scale(1)
+            page.update()
+            await asyncio.sleep(self.duration / 1000)
+        else:
+            page.clean()
+            page.add(new_container)
+            page.update()
+            await asyncio.sleep(0.01)
+            new_container.opacity = 1
+            new_container.scale = ft.Scale(1)
+            page.update()
+            await asyncio.sleep(self.duration / 1000)
+
+        page.clean()
+        page.add(*new_controls)
+        page.update()
+        return new_controls
+
     # @worker_task(priority=Priority.CRITICAL)
     async def _apply_slide(
         self, 
@@ -636,3 +836,24 @@ def create_zoom_transition(zoom_in: bool = True, duration: int = 300) -> RouteTr
 
     transition_type = TransitionType.ZOOM_IN if zoom_in else TransitionType.ZOOM_OUT
     return RouteTransition(transition_type, duration)
+
+def create_slide_fade_transition(direction: TransitionDirection, duration: int = 300) -> RouteTransition:
+    """Create a slide+fade transition in the specified direction."""
+
+    transition_map = {
+        TransitionDirection.LEFT: TransitionType.SLIDE_FADE_LEFT,
+        TransitionDirection.RIGHT: TransitionType.SLIDE_FADE_RIGHT,
+        TransitionDirection.UP: TransitionType.SLIDE_FADE_UP,
+        TransitionDirection.DOWN: TransitionType.SLIDE_FADE_DOWN,
+    }
+    return RouteTransition(transition_map[direction], duration)
+
+def create_fade_through_transition(duration: int = 300) -> RouteTransition:
+    """Create a fade-through transition."""
+
+    return RouteTransition(TransitionType.FADE_THROUGH, duration)
+
+def create_scale_fade_transition(duration: int = 300) -> RouteTransition:
+    """Create a scale+fade transition."""
+
+    return RouteTransition(TransitionType.SCALE_FADE, duration)
