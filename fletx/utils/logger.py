@@ -18,6 +18,7 @@ class SharedLogger:
     _logger: Optional[logging.Logger] = None
     _lock = threading.Lock()
     debug_mode = os.getenv('FLETX_DEBUG','0') == '1'
+    _env_log_level = os.getenv('FLETX_LOG_LEVEL', 'INFO').upper()
     
     @classmethod
     def get_logger(cls, name: str = "FletX") -> logging.Logger:
@@ -39,7 +40,14 @@ class SharedLogger:
         """One-time logger configuration"""
 
         logger = logging.getLogger(name)
-        logger.setLevel(logging.DEBUG if debug else logging.INFO)
+        # Determine level: env overrides, else fallback to debug flag
+        level_name = cls._env_log_level if cls._env_log_level in {
+            'CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'
+        } else 'INFO'
+        level = getattr(logging, level_name, logging.INFO)
+        if debug:
+            level = logging.DEBUG
+        logger.setLevel(level)
         
         if not logger.handlers:
             handler = logging.StreamHandler(sys.stdout)
@@ -47,6 +55,7 @@ class SharedLogger:
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
             )
             handler.setFormatter(formatter)
+            handler.setLevel(level)
             logger.addHandler(handler)
         
         cls._logger = logger
@@ -58,20 +67,16 @@ class SharedLogger:
     
     def info(self, message: str):
         """Log an info level message"""
-        if self.debug_mode:
-            self.logger.info(message)
+        self.logger.info(message)
     
     def warning(self, message: str):
-        """Log a warnning level mesage"""
-        if self.debug_mode:
-            self.logger.warning(message)
+        """Log a warning level message"""
+        self.logger.warning(message)
     
     def error(self, message: str,* args, **kwargs):
         """Log an error level message"""
-        if self.debug_mode:
-            self.logger.error(message)
+        self.logger.error(message)
     
     def critical(self, message: str):
         """Log a critical level message"""
-        if self.debug_mode:
-            self.logger.critical(message)
+        self.logger.critical(message)

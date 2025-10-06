@@ -378,7 +378,7 @@ class HTTPClient:
                     limit = self.pool_size,
                     force_close = False,
                     enable_cleanup_closed = True,
-                    verify_ssl = self.verify_ssl
+                    ssl = self.verify_ssl
                 )
             
             timeout = ClientTimeout(total=self.timeout)
