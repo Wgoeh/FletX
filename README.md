@@ -56,7 +56,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
         <img src = "./screeshots/videos/counter.gif" width="400">
       </td>
       <td rowspan="2">
-        Reactive list
+        Reactive List
         <img src = "./screeshots/videos/reactive_list.gif" width="400">
       </td>
     </tr>
@@ -73,7 +73,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 <!-- ### Counter App
 <img src = "./screeshots/videos/counter.gif" width="400">
 
-### Toto App
+### Todo App
 <img src = "./screeshots/videos/todo.gif" width="400">
 
 ### Reactive Forms

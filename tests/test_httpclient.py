@@ -108,3 +108,57 @@ def test_get_post_patch_delete_methods(monkeypatch, client):
     assert client.delete("/resource", sync=True).status == 201
     assert client.put("/resource", sync=True).status == 201
 
+
+@pytest.mark.asyncio
+async def test_async_retries_on_5xx(monkeypatch):
+    client = HTTPClient(base_url="https://api.example.com", debug=True)
+    client.max_retries = 2
+
+    class DummyResponse:
+        def __init__(self, status, headers=None, data=b"", url="https://api.example.com/x"):
+            self.status = status
+            self.headers = headers or {"Content-Type": "application/json"}
+            self._data = data
+            self.url = url
+            self.cookies = {}
+
+        async def json(self):
+            return {"ok": False}
+
+        async def text(self):
+            return "error"
+
+        async def read(self):
+            return b"error"
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return False
+
+    class DummySession:
+        def __init__(self):
+            self.closed = False
+            self.calls = 0
+
+        async def close(self):
+            self.closed = True
+
+        def request(self, *args, **kwargs):
+            self.calls += 1
+            # First attempt: 500, Second: 503, Third: 200
+            if self.calls == 1:
+                return DummyResponse(500)
+            elif self.calls == 2:
+                return DummyResponse(503)
+            return DummyResponse(200, headers={"Content-Type": "application/json"})
+
+    async def start_session_stub():
+        client._session = DummySession()
+
+    monkeypatch.setattr(client, "start_session", start_session_stub)
+
+    resp = await client.request("GET", "/retry-me")
+    assert isinstance(resp, HTTPResponse)
+    assert resp.status == 200
