@@ -11,6 +11,8 @@ from typing import (
 )
 from dataclasses import dataclass, field
 from time import monotonic
+import random
+from email.utils import parsedate_to_datetime
 from functools import wraps
 import aiohttp
 import requests
@@ -637,13 +639,14 @@ class HTTPClient:
         start_time = monotonic()
         last_exception = None
         
+        retryable_statuses = {429, 500, 502, 503, 504}
         for attempt in range(self.max_retries + 1):
             try:
                 if not self._session or self._session.closed:
                     await self.start_session()
 
                 async with self._session.request(
-                    metho = method,
+                    method = method,
                     url = url,
                     headers = merged_headers,
                     params = params,
@@ -674,18 +677,18 @@ class HTTPClient:
                     if self.debug:
                         logger.debug(f"Response ({response.status}) in {elapsed:.2f}s")
 
-                    # Handle error responses
-                    if response.status == 429:
-
-                        error = RateLimitError(
-                            message="Rate limit exceeded",
-                            status_code=response.status,
-                            raw_response=response_data,
-                            headers=dict(response.headers)
-                        )
-                        error = await self._apply_middlewares_error(error)
-                        if error:
-                            raise error
+                    # Handle retryable responses (429/5xx)
+                    if response.status in retryable_statuses and attempt < self.max_retries:
+                        # Respect Retry-After header if present
+                        retry_after = response.headers.get('Retry-After')
+                        wait_time = self._compute_retry_wait(attempt, retry_after)
+                        if self.debug:
+                            logger.warning(
+                                f"Retryable status {response.status}. Attempt {attempt + 1}/{self.max_retries}. "
+                                f"Waiting {wait_time:.2f}s before retry."
+                            )
+                        await asyncio.sleep(wait_time)
+                        continue
                     
                     http_response = HTTPResponse(
                         status = response.status,
@@ -717,7 +720,7 @@ class HTTPClient:
                         ) from e
                     raise e
                 
-                retry_wait = self.retry_delay * (2 ** attempt)
+                retry_wait = self.retry_delay * (2 ** attempt) * (1 + random.uniform(0, 0.25))
                 if self.debug:
                     logger.warning(
                         f"Attempt {attempt + 1} failed. Retrying in {retry_wait:.1f}s. Error: {str(e)}"
@@ -856,6 +859,36 @@ class HTTPClient:
                 files, 
                 **kwargs
             )
+
+    def _compute_retry_wait(self, attempt: int, retry_after: Optional[str]) -> float:
+        """
+        Compute retry wait time using exponential backoff with jitter and
+        honoring Retry-After header when available.
+        """
+        # Respect Retry-After if present and valid
+        if retry_after:
+            # Retry-After can be seconds or an HTTP-date
+            try:
+                seconds = int(retry_after)
+                return max(0.0, float(seconds))
+            except ValueError:
+                try:
+                    from datetime import datetime, timezone
+                    retry_dt = parsedate_to_datetime(retry_after)
+                    # Ensure timezone-aware comparison
+                    if retry_dt.tzinfo is None:
+                        retry_dt = retry_dt.replace(tzinfo=timezone.utc)
+                    now = datetime.now(tz=retry_dt.tzinfo)
+                    delay = (retry_dt - now).total_seconds()
+                    # If computed negative due to clock differences, fallback to base
+                    if delay > 0:
+                        return delay
+                except Exception:
+                    pass
+
+        # Exponential backoff with small jitter
+        base = self.retry_delay * (2 ** attempt)
+        return base * (1 + random.uniform(0, 0.25))
 
     # Convenience methods
     def get(

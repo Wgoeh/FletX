@@ -51,7 +51,7 @@ Perfect for building **desktop, web, and mobile apps** with Python at lightning 
 <!-- ### Counter App
 <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/counter.gif" width="400">
 
-### Toto App
+### Todo App
 <img src = "https://github.com/AllDotPy/FletX/blob/master/screeshots/videos/todo.gif" width="400">
 
 ### Reactive Forms
@@ -117,7 +117,7 @@ from fletx.widgets import Obx
 
 class CounterController(FletXController):
 
-    def __init__(self)
+    def __init__(self):
         count = RxInt(0)  # Reactive state
         super().__init__()
 
@@ -214,7 +214,7 @@ class SearchController(FletXController):
 ### 2. Smart Routing
 ```python
 # Define routes
-from flex.navigation import router_config, navigate
+from fletx.navigation import router_config, navigate
 
 # 1. simple routing
 router_config.add_routes([
