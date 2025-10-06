@@ -18,7 +18,7 @@ class SharedLogger:
     _logger: Optional[logging.Logger] = None
     _lock = threading.Lock()
     debug_mode = os.getenv('FLETX_DEBUG','0') == '1'
-    _env_log_level = os.getenv('FLETX_LOG_LEVEL', 'INFO').upper()
+    _env_log_level = os.getenv('FLETX_LOG_LEVEL', 'NOTSET').upper()
     
     @classmethod
     def get_logger(cls, name: str = "FletX") -> logging.Logger:
@@ -43,8 +43,8 @@ class SharedLogger:
         # Determine level: env overrides, else fallback to debug flag
         level_name = cls._env_log_level if cls._env_log_level in {
             'CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'
-        } else 'INFO'
-        level = getattr(logging, level_name, logging.INFO)
+        } else 'NOTSET'
+        level = getattr(logging, level_name, logging.NOTSET)
         if debug:
             level = logging.DEBUG
         logger.setLevel(level)
@@ -67,16 +67,20 @@ class SharedLogger:
     
     def info(self, message: str):
         """Log an info level message"""
-        self.logger.info(message)
+        if self.logger.isEnabledFor(logging.INFO):
+            self.logger.info(message)
     
     def warning(self, message: str):
         """Log a warning level message"""
-        self.logger.warning(message)
+        if self.logger.isEnabledFor(logging.WARNING):
+            self.logger.warning(message)
     
     def error(self, message: str,* args, **kwargs):
         """Log an error level message"""
-        self.logger.error(message)
+        if self.logger.isEnabledFor(logging.ERROR):
+            self.logger.error(message)
     
     def critical(self, message: str):
         """Log a critical level message"""
-        self.logger.critical(message)
+        if self.logger.isEnabledFor(logging.CRITICAL):
+            self.logger.critical(message)
